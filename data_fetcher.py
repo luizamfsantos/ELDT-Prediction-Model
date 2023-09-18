@@ -167,7 +167,7 @@ class APIClient:
             headers (dict): Additional headers to include in the request.
 
         Returns:
-            dict: The JSON response from the API.
+            dict or int: The JSON response from the API if the status code is 200, else the status code.
         """
         url = f"{self.base_url}/{db}?token={self.token}&idate={start_date}&fdate={end_date}"
 
@@ -180,7 +180,10 @@ class APIClient:
                 headers=headers
             )
             response.raise_for_status()
-            return response.json()
+            if response.status_code == 200:
+                return response.json()
+            else:
+                return response.status_code
         except requests.exceptions.RequestException as e:
             # Handle exceptions or errors here
             print(f"Request error: {e}")
