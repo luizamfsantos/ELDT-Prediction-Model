@@ -153,12 +153,14 @@ class APIClient:
             print("Token file not found.")
             return None
 
-    def make_request(self, endpoint, method="GET", params=None, data=None, headers=None):
+    def make_request(self, db, start_date, end_date, method="GET", params=None, data=None, headers=None):
         """
-        Make a request to the REST API with the loaded token.
+        Make a request to the REST API with the loaded token, specifying the database and time period.
 
         Args:
-            endpoint (str): The API endpoint to request.
+            db (str): The database name you want to access.
+            start_date (str): The start date for the time period (e.g., "2022-06-01").
+            end_date (str): The end date for the time period (e.g., "2022-06-02").
             method (str): The HTTP method for the request (e.g., GET, POST, PUT, DELETE).
             params (dict): Query parameters to include in the request.
             data (dict): Request body data for POST or PUT requests.
@@ -167,12 +169,7 @@ class APIClient:
         Returns:
             dict: The JSON response from the API.
         """
-        url = f"{self.base_url}/{endpoint}"
-
-        if self.token:
-            if headers is None:
-                headers = {}
-            headers["Authorization"] = f"Bearer {self.token}"
+        url = f"{self.base_url}/{db}?token={self.token}&idate={start_date}&fdate={end_date}"
 
         try:
             response = requests.request(
@@ -195,8 +192,11 @@ if __name__ == "__main__":
     token_file = "../virtual_token.txt"  # MODIFY THIS FOR YOUR TOKEN FILE
     api = APIClient(base_url, token_file)
 
-    # Example GET request
-    response = api.make_request("endpoint")
+    # Example GET request for database 'bimtra' and time period '2022-06-01' to '2022-06-02'
+    db = 'bimtra'
+    start_date = '2022-06-01'
+    end_date = '2022-06-02'
+    response = api.make_request(db, start_date, end_date)
 
     if response:
         # Process the response data here
