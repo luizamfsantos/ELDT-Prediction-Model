@@ -131,7 +131,7 @@ db = ['bimtra', 'cat-62', 'esperas', 'metaf', 'metar', 'satelite', 'tc-prev', 't
 # ]
 
 class APIClient:
-    def __init__(self, base_url, token_file):
+    def __init__(self, token_file, base_url="http://montreal.icea.decea.mil.br:5002/api/v1"):
         self.base_url = base_url
         self.token = self.load_token(token_file)
 
