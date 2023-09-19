@@ -3,48 +3,35 @@ import pandas as pd
 import numpy as np
 
 # /bimtra: lista de dicionarios com: "flightid", "origem", "destino", "dt_dep", "dt_arr"
-# exemplo:
-# [
-#   {
-#     "flightid": "fcb2bf90345705318213ae1307c0f901",
-#     "origem": "SBKP",
-#     "destino": "SBRJ",
-#     "dt_dep": 1654044297000,
-#     "dt_arr": 1654046760000
-#   },
-#   {
-#     "flightid": "c7c5c10716335b048f86d8c52fcba3f2",
-#     "origem": "SBGR",
-#     "destino": "SBRJ",
-#     "dt_dep": 1654045021000,
-#     "dt_arr": 1654047173000
-#   }
-# ]
 # flightid: string - unique id
 # origen: string (4 letters) - city
 # destino: string (4 letters) - city
 # dt_dep: int (possibly alter to datetime)-  departure time
 # dt_arr: int (possibly alter to datetime) - arrival time
 
-# /cat-62: so consegui erro 500 (Internal Server Error) - Luiza (2023-09-18)
 
 # /esperas: lista de dicionarios com: "esperas", "hora", "aero"
-# exemplo:
-# [
-#   {
-#     "esperas": 0,
-#     "hora": 1654041600000,
-#     "aero": "SBBR"
-#   },
-#   {
-#     "esperas": 0,
-#     "hora": 1654045200000,
-#     "aero": "SBBR"
-#   }
-# ]
 # esperas: int - esperas por hora
 # hora: int (possibly alter to datetime)
 # aero: string (4 letters) - city
+
+# /satelite: lista de dicionarios com: "data", "path", "tamanho"
+# exemplo:
+# [
+#   {
+#     "data": "2022-06-01 01:00:00",
+#     "path": "http://satelite.cptec.inpe.br/repositoriogoes/goes16/goes16_web/ams_ret_ch11_baixa/2022/06/S11635384_202206010100.jpg",
+#     "tamanho": 1879673
+#   },
+#   {
+#     "data": "2022-06-01 02:00:00",
+#     "path": "http://satelite.cptec.inpe.br/repositoriogoes/goes16/goes16_web/ams_ret_ch11_baixa/2022/06/S11635384_202206010200.jpg",
+#     "tamanho": 1877693
+#   }
+# ]
+# data: datetime hourly data
+# path: string url to satelite data 24 * 365 = 8760 images
+# tamanho: int (find out what it means)
 
 
 # /metaf: lista de dicionarios com: "hora", "metaf", "aero"
@@ -78,23 +65,6 @@ import numpy as np
 #   }
 # ]
 
-# /satelite: lista de dicionarios com: "data", "path", "tamanho"
-# exemplo:
-# [
-#   {
-#     "data": "2022-06-01 01:00:00",
-#     "path": "http://satelite.cptec.inpe.br/repositoriogoes/goes16/goes16_web/ams_ret_ch11_baixa/2022/06/S11635384_202206010100.jpg",
-#     "tamanho": 1879673
-#   },
-#   {
-#     "data": "2022-06-01 02:00:00",
-#     "path": "http://satelite.cptec.inpe.br/repositoriogoes/goes16/goes16_web/ams_ret_ch11_baixa/2022/06/S11635384_202206010200.jpg",
-#     "tamanho": 1877693
-#   }
-# ]
-# data: datetime hourly data
-# path: string url to satelite data 24 * 365 = 8760 images
-# tamanho: int (find out what it means)
 
 # /tc-prev: lista de dicionarios com: "hora", "troca", "aero"
 # exemplo:
@@ -127,3 +97,5 @@ import numpy as np
 #     "aero": "RF"
 #   }
 # ]
+
+# /cat-62: so consegui erro 500 (Internal Server Error) - Luiza (2023-09-18)
