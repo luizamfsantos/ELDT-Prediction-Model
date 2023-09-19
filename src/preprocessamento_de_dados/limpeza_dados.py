@@ -92,6 +92,9 @@ import numpy as np
 #     "tamanho": 1877693
 #   }
 # ]
+# data: datetime hourly data
+# path: string url to satelite data 24 * 365 = 8760 images
+# tamanho: int (find out what it means)
 
 # /tc-prev: lista de dicionarios com: "hora", "troca", "aero"
 # exemplo:
