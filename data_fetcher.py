@@ -36,7 +36,7 @@ db = ['bimtra', 'cat-62', 'esperas', 'metaf', 'metar', 'satelite', 'tc-prev', 't
 #   }
 # ]
 
-# /cat-62: so consegui erro 500 (Internal Server Error)
+# /cat-62: so consegui erro 500 (Internal Server Error) - Luiza (2023-09-18)
 
 # /esperas: lista de dicionarios com: "esperas", "hora", "aero"
 # exemplo:
