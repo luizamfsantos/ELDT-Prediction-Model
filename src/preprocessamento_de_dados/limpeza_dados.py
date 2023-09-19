@@ -61,6 +61,7 @@ import numpy as np
 #     "aero": "SBGL"
 #   }
 # ]
+# descobrir o que metaf quer dizer
 
 # /metar: lista de dicionarios com: "hora", "metar", "aero"
 # exemplo:
