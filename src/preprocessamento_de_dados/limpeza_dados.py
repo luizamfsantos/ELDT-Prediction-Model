@@ -42,6 +42,10 @@ import numpy as np
 #     "aero": "SBBR"
 #   }
 # ]
+# esperas: int - esperas por hora
+# hora: int (possibly alter to datetime)
+# aero: string (4 letters) - city
+
 
 # /metaf: lista de dicionarios com: "hora", "metaf", "aero"
 # exemplo:
