@@ -203,7 +203,7 @@ if __name__ == "__main__":
     # first_day = datetime(2022, 6, 1)
     # last_day = datetime(2022, 6, 1)
     # Example GET request for database 'bimtra' and time period '2022-06-01' to '2022-06-02'
-    db = 'metar'
+    db = 'tc-prev'
     current_date = first_day
     while current_date <= last_day:
         start_date = current_date.strftime("%Y-%m-%d")
