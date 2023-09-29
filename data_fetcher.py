@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+from datetime import datetime, timedelta
 
 # Base de dados
 # 1. BIMTRA (Banco de Informações de Movimento de Tráfego Aéreo)
@@ -205,4 +206,4 @@ if __name__ == "__main__":
     if response:
         # Process the response data here
         response = pd.DataFrame(response)
-        print(response)
+        response.to_csv(f'data/bruto/{db}_{start_date}_{end_date}.csv', index=False)
