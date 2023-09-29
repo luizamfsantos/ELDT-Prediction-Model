@@ -9,17 +9,18 @@ import pandas as pd
 # combined_metaf = pd.concat([metaf_2022_06_02, metaf_2022_06_03], ignore_index=True)
 
 # Initialize an empty dataframe to store the combined data
-combined_metaf = pd.DataFrame()
+combined_df = pd.DataFrame()
 
 # Define the start and end dates for June
 start_date = pd.to_datetime('2022-06-01')
 end_date = pd.to_datetime('2022-06-30')
 
 # Loop through each day in June
+db = "metar"
 current_date = start_date
 while current_date <= end_date:
     # Generate the file path for the current day
-    file_path = f'data/bruto/metaf/metaf_{current_date.strftime("%Y-%m-%d")}_{current_date.strftime("%Y-%m-%d")}.csv'
+    file_path = f'data/bruto/{db}/{db}_{current_date.strftime("%Y-%m-%d")}_{current_date.strftime("%Y-%m-%d")}.csv'
     
     # Read the data for the current day
     try: 
@@ -32,10 +33,10 @@ while current_date <= end_date:
     current_data["hora_dt"] = current_data["hora"].apply(lambda x: pd.to_datetime(x, unit='ms'))
     
     # Concatenate the current day's data to the combined dataframe
-    combined_metaf = pd.concat([combined_metaf, current_data], ignore_index=True)
+    combined_df = pd.concat([combined_df, current_data], ignore_index=True)
     
     # Move to the next day
     current_date += pd.Timedelta(days=1)
 
-# Now, combined_metaf contains the data for all days in June 2022
-combined_metaf.to_csv('data/processado/metaf/metaf_2022-06-01_2022-06-30.csv', index=False)
+# Now, combined_df contains the data for all days in June 2022
+combined_df.to_csv('data/processado/{db}/{db}_2022-06-01_2022-06-30.csv', index=False)
