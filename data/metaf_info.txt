@@ -1,0 +1,213 @@
+TAF Decoder
+A Terminal Aerodrome Forecast (TAF) is a concise statement of the expected meteorological conditions at an airport during a specified period (usually 24 hours). Each ICAO state may modify the code as needed. The TAF code, as described here, is the one used in the United States. TAFs use the same weather code found in METAR weather reports.
+
+TAF Report Elements
+
+TAF
+KOKC 051130Z 051212 14008KT 5SM BR BKN030 TEMPO 1316 1 1/2SM BR
+FM1600 16010KT P6SM SKC
+BECMG 2224 20013G20KT 4SM SHRA OVC020 PROB40 0006 2SM TSRA OVC008CB
+BECMG 0608 21015KT P6SM NSW SCT040 =
+
+A TAF report contains the following sequence of elements in the following order:
+1. Type of Report
+2. ICAO Station Identifier
+3. Date and Time of Origin
+4. Valid Period Date and Time
+5. Forecast Meteorological Conditions
+The international TAF also contains forecast temperature, icing, and turbulence. These three elements are not included in National Weather Service (NWS) prepared TAFs. The U.S. has no requirement to forecast temperatures in an aerodrome forecast and the NWS will continue to forecast icing and turbulence in AIRMETs and SIGMETs.
+
+Type of Report: ie. (TAF)
+
+The report type header will always appear as the first element in the TAF forecast. There are two types of TAF reports, a routine forecast, TAF, and an amended forecast, TAF AMD. An amended TAF is issued when the current TAF no longer adequately describes the ongoing weather or the forecaster feels the TAF is not representative of the current or expected weather.
+
+Corrected (COR) or delayed (RTD) TAFs are identified only in the communications header which precedes the forecast text.
+
+ICAO Station Identifier: ie. (KOKC)
+
+The TAF code uses the ICAO four-letter location identifiers. In the conterminous United States, the three-letter identifier is prefixed with a K. For example SEA (Seattle) becomes KSEA. Elsewhere, the first one or two letters of the ICAO identifier indicate in which region of the world and country (or state) the station is. Pacific locations such as Alaska, Hawaii, and the Marianas islands start with P followed by an A, H, or G respectively. The last two letters reflect the specific station identification. If the location's three-letter identification begins with an A, H, or G, the P is just added to the beginning. If the location's three-letter identification does not begin with an A, H, or G, the last letter is dropped and the P is added to the beginning.
+
+Examples:
+
+ANC (Anchorage, AK) becomes PANC
+OME (Nome, AK) becomes PAOM
+HNL (Honolulu, HI) becomes PHNL
+KOA (Keahole Point, HI) becomes PHKO
+GRO (Rota Becomesland) becomes PGRO
+UAM (Anderson AFB) becomes PGUA
+Canadian station identifiers start with C. Mexican and western Caribbean station identifiers start with M. The identifier for the eastern Caribbean is T, followed by the individual country's letter.
+
+Date and Time of Origin: ie. (051130Z)
+
+This element is the UTC date and time the forecast is actually prepared. The format is a two-digit date and four-digit time followed, without a space, by the letter Z. Routine TAFs are prepared and filed approximately one-half hour prior to scheduled issuance times. TAFs are scheduled for issuance foure times daily at 0000Z, 0600Z, 1200Z, and 1800Z.
+
+Example:
+
+091050Z - Forecast prepared on the ninth day of the month at 1050Z.
+
+Valid Period Date and Time: ie. (051212)
+
+The UTC valid period of the forecast is a two-digit date followed by the two-digit beginning hour and two-digit ending hour. Routine TAFs are valid for 24-hours. Valid periods beginning at 0000Z shall be indicated as 00. Valid periods ending at 0000Z shall be indicated as 24. The 24 indication applies to all time group ending times.
+
+In the case of an amended forecast, or a forecast which is corrected or delayed, the valid period may be for less than 24 hours. Where an airport or terminal operates on a part-time basis (less than 24 hours/day) the TAFs issued for those locations will have the abbreviated statement NIL AMD SKED AFT (closing time)Z, added to the end of the forecast. For the TAFS issued while these locations are closed, the word NIL will appear in place of the forecast text. A delayed (RTD) forecast will then be issued for these locations after two complete observations are received.
+
+Examples:
+
+091212 - Forecast valid from the ninth at 1200Z til the tenth at 1200Z.
+110024 - Forecast valid from the eleventh at 0000Z till the twelfth at 0000Z.
+010524 - Amended forecast valid from the first at 0500Z till the second at 0000Z.
+Forecast Meteorological Conditions
+
+This is the body of the TAF. The basic format is:
+
+Wind - Visibility - Weather - Sky Condition - Optional Data (Wind Shear)
+
+The wind, visibility, and sky condition elements are always included in the initial time group of the forecast. Weather is included in the initial time group only if significant to aviation. If a significant, lasting change in any of the elements is expected during the valid period, a new time period with changes is included. It should be noted that, with the exception of a FM group, the new time period will include only those elements which are expected to change; i.e., if a lowering of the visibility is expected but the wind is expected to remain the same, the new time period reflecting the lower visibility would not include a forecast wind. The forecast wind would remain the same as in the previous time period.
+
+Any temporary conditions expected during a specific time period are included with that time period.
+
+Wind: ie. (14008KT)
+
+The wind group includes forecast surface winds. The surface wind is the expected wind direction (first three digits) and speed (last two or three digits if 100 knots or greater). The contraction KT follows to denote the units of wind speed in knots. Wind gusts are noted by the letter G appended to the wind speed followed by the highest expected gust (two or three digits if 100 knots or greater).
+
+Calm winds (three knots or less) are encoded as 00000KT.
+
+Variable winds are encoded when it is impossible to forecast a wind direction due to winds associated with convective activity or low wind speeds. A variable wind direction is noted by VRB where the three digit direction usually appears.
+
+Examples:
+
+18010KT - Wind one eight zero at one zero knots
+35012G20KT - Wind three five zero at one two gust two zero knots
+00000KT - Wind calm
+VRB16G28KT - Wind variable at one six gust two eight knots
+Visibility: ie. (5SM)
+
+The expected prevailing visibility is forecast in statute miles and fractions of statute miles followed by SM to note the units of measure. Statute miles followed by fractions of statute miles are separated with a space, for example, 1 1/2SM. Forecast visibility greater than 6 statute miles is indicated by coding P6SM. Directional or variable visibility is not forecasted and the visibility group is omitted if missing.
+
+Examples:
+
+1/2SM - Visibility one-half statute mile
+2 1/4SM - Visibility two and one-quarter statute miles
+5SM - Visibility five statute miles
+P6SM - Visibility more than six statute miles
+Weather: ie. (BR)
+
+The expected weather phenomenon or phenomena is coded in TAF reports using the same format, qualifiers, and phenomena contractions as METAR reports (except UP).
+
+Qualifiers of Intensity or Proximity
+
+- Light
+Moderate (no qualifier)
++ Heavy or well-developed
+VC in the Vicinity
+Qualifier Descriptor
+
+MI Shallow
+BC Patches
+DR Low Drifting
+BL Blowing
+SH Showers
+TS Thunderstorm
+FZ Freezing
+PR Partial
+Precipitation
+
+DZ Drizzle
+RA Rain
+SN Snow
+SG Snow Grains
+IC Ice Crystals
+PL Ice Pellets
+GR Hail
+GS Small Hail or Snow Pellets (less than 1/4 inch in diameter)
+UP Unknown precipitation (automated stations only)
+Obscuration
+
+BR Mist (Foggy conditions with visibilities greater than 5/8 statute mile)
+FG Fog (visibility 5/8 statute mile or less)
+FU Smoke
+DU Dust
+SA Sand
+HZ Haze
+PY Spray
+VA Volcanic Ash
+Other
+
+PO Well-Developed Dust/Sand Whirls
+SQ Squalls
+FC Funnel Cloud
++FC Well-Developed Funnel Cloud, Tornado or Waterspout
+SS Sandstorm
+DS Duststorm
+Obscurations to vision will be forecast whenever the prevailing visibility is forecast to be 6 statute miles or less.
+
+: ie. (KOKC)
+If no significant weather is expected to occur during a specific time period in the forecast, the weather group is omitted for that time period. If, after a time period in which significant weather has been forecast, a change to a forecast of no significant weather occurs, the contraction NSW (No Significant Weather) will apear as the weather group in the new time period. However, NSW is only included in the BECMG or TEMPO groups.
+
+Sky Condition: ie. (BKN030)
+
+TAF sky condition forecasts use the METAR format. Cumulonimbus clouds (CB) are the only cloud type forecast in TAFs.
+
+When the sky is obscured due to a surface-based phenomenon, vertical visibility (VV) into the obscuration is forecast. The format for vertical visibility is VV followed by a three-digit height in hundreds of feet.
+
+Note: Ceiling layers are not designated in the TAF code. For aviation purposes, the ceiling is the lowest broken or overcast layer or vertical visibility into a complete obscuration.
+
+Examples:
+
+SKC - Sky clear
+SCT005 BKN025CB BKN250 - Five hundred scattered, ceiling two thousand five hundred broken cumulonimbus clouds, two five thousand broken.
+VV008 - Indefinite ceiling eight hundred
+Optional Data (Wind Shear)
+
+Wind shear is the forecast of non-convective low level winds (up to 2000 feet) and is entered after the sky conditions when wind shear is expected. The forecast includes the height of the wind shear followed by the wind direction and wind speed at the indicated height. Height is given in hundreds of feet AGL up to and including 2,000 feet. Wind shear is encoded with the contraction WS followed by a three-digit height, slant character, and winds at the height indicated in the same format as surface winds. The wind shear element is omitted if not expected to occur.
+
+Example:
+
+WS010/18040KT - Low level wind shear at one thousand, wind one eight zero at four zero.
+Probability Forecast: ie. (PROB40 0006)
+
+The probability or chance of thunderstorms or other precipitation events occuring, along with associated weather conditions (wind, visibility, and sky conditions).
+
+The PROB40 group is used when the occurrence of thunderstorms or precipitation is in the 30% to less than 50% range, thus the probability value 40 is appended to the PROB contraction. This is followed by a four-digit group giving the beginning hour and ending hour of the time period during which the thunderstorms or precipitation is expected.
+
+Note: PROB40 will not be shown during the first six hours of a forecast.
+
+Examples:
+
+PROB40 2102 1/2SM +TSRA - Chance between 2100Z and 0200Z of visibility one-half thunderstorm, heavy rain.
+PROB40 1014 1SM RASN - Chance between 1000Z and 1400Z of visibility one rain and snow.
+PROB40 2024 2SM FZRA - Chance between 2000Z and 0000Z of visibility two freezing rain.
+Forecast Change Indicators
+
+The following change indicators are used when either a rapid, gradual, or temporary change is expected in some or all of the forecast meteorological conditions. Each change indicator marks a time group within the TAF report.
+
+FROM Group: ie. (FM1600)
+
+The FM group is used when a rapid change, usually occuring in less than one hour, in prevailing conditions is expected. Typically, a rapid change of prevailing conditions to more or less a completely new set of prevailing conditions is associated with a synoptic feature passing through the terminal area (cold or warm frontal passage). Appended to the FM indicator is the four-digit hour and minute the change is expected to begin and continues until the next change group or until the end of the current forecast.
+
+A FM group will mark the beginning of a new line in a TAF report. Each FM group contains all the required elements -- wind, visibility, weather, and sky condition. Weather will be omitted in FM groups when it is not significant to aviation. FM groups will not include the contraction NSW.
+
+Examples:
+
+FM0100 SKC - After 0100Z sky clear
+FM1430 OVC020 - After 1430Z ceiling two thousand overcast
+BECOMING Group: ie. (BECMG 2224)
+
+The BECMG group is used when a gradual change in conditions is expected over a longer time period, usually two hours. The time period when the change is expected is a four-digit group with the beginning hour and ending hour of the change period which follows the BECMG indicator. The gradual change will occur at an unspecified time within this time period. Only the conditions are carried over from the previous time group.
+
+Example:
+
+OVC012 BECMG 1416 BKN020 - Ceiling one thousand two hundred overcast. Then a gradual change to ceiling two thousand broken between 1400Z and 1600Z.
+
+TEMPORARY Group: ie. (TEMPO 1316)
+
+The TEMPO group is used for any conditions in wind, visibility, weather, or sky condition which are expected to last for generally less than an hour at a time (occasional), and are expected to occur during less than half the time period. The TEMPO indicator is followed by a four-digit group giving the beginning hour and ending hour of the time period during which the temporary conditions are expected. Only the changing forecast meteorological conditions are included in TEMPO groups. The omitted conditions are carried over from the previous time group.
+
+Examples:
+
+SCT030 TEMPO 1923 BKN030 - Three thousand scattered with occasional ceilings three thousand broken between 1900Z and 2300Z.
+4SM HZ TEMPO 0006 2SM BR HZ - Visibility four in haze with occasional visibility two in mist and haze between 0000Z and 0600Z.
+=: ie. (KOKC)
+The = indicates the end of the individual TAF transmission. TAFs are bundled together and transmitted as a single document. The = provides a convenient means of separating this document into the individual TAF reports.
+
+Source: FAA Training Center publication National Air Traffic Training Program, Air Traffic Guide, Aviation Routine, Weather Report (METAR), Aerodrome Forecast (TAF)
