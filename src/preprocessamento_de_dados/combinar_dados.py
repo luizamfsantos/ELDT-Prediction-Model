@@ -39,4 +39,4 @@ while current_date <= end_date:
     current_date += pd.Timedelta(days=1)
 
 # Now, combined_df contains the data for all days in June 2022
-combined_df.to_csv('data/processado/{db}/{db}_{start_date.strftime("%Y-%m-%d")}_{end_date.strftime("%Y-%m-%d")}.csv', index=False)
+combined_df.to_csv(f'data/processado/{db}/{db}_{start_date.strftime("%Y-%m-%d")}_{end_date.strftime("%Y-%m-%d")}.csv', index=False)
