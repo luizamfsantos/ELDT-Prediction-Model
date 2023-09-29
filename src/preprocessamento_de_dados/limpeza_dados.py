@@ -99,3 +99,34 @@ import numpy as np
 # ]
 
 # /cat-62: so consegui erro 500 (Internal Server Error) - Luiza (2023-09-18)
+
+
+def read_csv_first_n_entries(file_path, n=100, delimiter=',', encoding='utf-8'):
+    """
+    Read the first 'n' entries from a CSV file using Pandas.
+
+    Parameters:
+    - file_path (str): The path to the CSV file.
+    - n (int, optional): The number of entries to read. Default is 100.
+
+    Returns:
+    - DataFrame: A Pandas DataFrame containing the first 'n' entries from the CSV file.
+    """
+    try:
+        # Read the CSV file into a DataFrame, limiting the number of rows to 'n'.
+        df = pd.read_csv(file_path, nrows=n, delimiter=',', encoding='utf-8')
+        # Return the DataFrame.
+        return df
+    except FileNotFoundError:
+        print(f"Error: The file '{file_path}' was not found.")
+        return None
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return None
+
+if __name__ == "__main__":
+    # Replace 'your_file.csv' with the path to your CSV file.
+    # You can also specify the number of lines to read as the second argument.
+    df = read_csv_first_n_entries('../dados.csv', n=50)
+    if df is not None:
+        print(df)
