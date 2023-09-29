@@ -200,7 +200,8 @@ if __name__ == "__main__":
 
     first_day = datetime(2022, 6, 1)
     last_day = datetime(2023, 5, 13)
-
+    # first_day = datetime(2022, 6, 1)
+    # last_day = datetime(2022, 6, 1)
     # Example GET request for database 'bimtra' and time period '2022-06-01' to '2022-06-02'
     db = 'esperas'
     current_date = first_day
@@ -212,5 +213,5 @@ if __name__ == "__main__":
         if response:
             # Process the response data here
             response = pd.DataFrame(response)
-            response.to_csv(f'data/bruto/{db}_{start_date}_{end_date}.csv', index=False)
+            response.to_csv(f'data/bruto/{db}/{db}_{start_date}_{end_date}.csv', index=False)
         current_date += timedelta(days=1)
