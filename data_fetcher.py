@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
+from time import sleep
 
 # Base de dados
 # 1. BIMTRA (Banco de Informações de Movimento de Tráfego Aéreo)
@@ -197,13 +198,19 @@ if __name__ == "__main__":
     token_file = "../virtual_token.txt"  # MODIFY THIS FOR YOUR TOKEN FILE
     api = APIClient(token_file)
 
-    # Example GET request for database 'bimtra' and time period '2022-06-01' to '2022-06-02'
-    db = 'bimtra'
-    start_date = '2023-05-13'
-    end_date = '2023-05-13'
-    response = api.make_request(db, start_date, end_date)
+    first_day = datetime(2022, 6, 1)
+    last_day = datetime(2023, 5, 13)
 
-    if response:
-        # Process the response data here
-        response = pd.DataFrame(response)
-        response.to_csv(f'data/bruto/{db}_{start_date}_{end_date}.csv', index=False)
+    # Example GET request for database 'bimtra' and time period '2022-06-01' to '2022-06-02'
+    db = 'esperas'
+    current_date = first_day
+    while current_date <= last_day:
+        start_date = current_date.strftime("%Y-%m-%d")
+        end_date = start_date
+        response = api.make_request(db, start_date, end_date)
+        sleep(1)
+        if response:
+            # Process the response data here
+            response = pd.DataFrame(response)
+            response.to_csv(f'data/bruto/{db}_{start_date}_{end_date}.csv', index=False)
+        current_date += timedelta(days=1)
