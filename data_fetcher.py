@@ -1,4 +1,5 @@
 import requests
+import pandas as pd
 
 # Base de dados
 # 1. BIMTRA (Banco de Informações de Movimento de Tráfego Aéreo)
@@ -12,7 +13,7 @@ import requests
 
 db = ['bimtra', 'cat-62', 'esperas', 'metaf', 'metar', 'satelite', 'tc-prev', 'tc-real']    # Lista de bases de dados
 
-# Periodo: de junho de 2022 a maio de 2023
+# Periodo: de junho 1 de 2022 a maio 13 de 2023
 
 # Exemplo de Request URL
 # http://montreal.icea.decea.mil.br:5002/api/v1/bimtra?token={VIRTUAL-KEY}&idate=2022-06-01&fdate=2022-06-02
@@ -193,14 +194,15 @@ class APIClient:
 if __name__ == "__main__":
     base_url = "http://montreal.icea.decea.mil.br:5002/api/v1"
     token_file = "../virtual_token.txt"  # MODIFY THIS FOR YOUR TOKEN FILE
-    api = APIClient(base_url, token_file)
+    api = APIClient(token_file)
 
     # Example GET request for database 'bimtra' and time period '2022-06-01' to '2022-06-02'
     db = 'bimtra'
-    start_date = '2022-06-01'
-    end_date = '2022-06-02'
+    start_date = '2023-05-13'
+    end_date = '2023-05-13'
     response = api.make_request(db, start_date, end_date)
 
     if response:
         # Process the response data here
+        response = pd.DataFrame(response)
         print(response)
