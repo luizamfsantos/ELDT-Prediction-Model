@@ -42,6 +42,16 @@ def check_wind(df):
     if ~(df["wind"].str.endswith("KT").all()):
         raise ValueError("df['wind'] does not end with KT")
 
+def check_missing_visibility(df):
+    # check if rest starts with number where rest is the rest of the string after wind
+    if ~(df["rest"].str.startswith(r'\d').all()):
+        # if the next value is CAVOK, then visibility is 10000 so add 10000, to the beginning of the string
+        df["rest"] = np.where(df["rest"].str.startswith("CAVOK"), "10000," + df["rest"], df["rest"])
+        # any other case, add 0000, to the beginning of the string
+        condition = ~(df["rest"].str.match(r'^\d')) & ~(df["rest"].str.startswith("CAVOK"))
+        df["rest"] = np.where(condition, "0000," + df["rest"], df["rest"])
+    return df
+
 if __name__ == "__main__":
     # Sample data for the dataframe that won't raise an error
     data_no_error = {
@@ -73,6 +83,15 @@ if __name__ == "__main__":
         'dew_point': ['21', '21'],
         'altimeter (hPA)': ['Q1016=', 'Q1017='],
         'aero': ['SBGL', 'SBSG']
+    }
+    
+    data_missing_visibility = {
+        'hora': [1654041600000, 1654045200000],
+        'report': ['METAR', 'METAF'],
+        'station': ['XYZ', 'ABC'],  # These station codes are not in the 'aero' dictionary
+        'dt_origin': ['010000', '010100Z'],
+        'wind': ['25002', '02001KT'],
+        'rest': ['BROVC03323/21Q1016', '2000']
     }
 
     # Create dataframes

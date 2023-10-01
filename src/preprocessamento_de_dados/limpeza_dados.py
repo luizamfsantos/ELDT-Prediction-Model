@@ -190,12 +190,7 @@ def expand_metaf(df):
     df[["wind","rest"]] = df["rest"].str.split(',', n=1, expand=True)
 
     # check if rest starts with number
-    if ~(df["rest"].str.startswith(r'\d').all()):
-        # if the next value is CAVOK, then visibility is 10000 so add 10000, to the beginning of the string
-        df["rest"] = np.where(df["rest"].str.startswith("CAVOK"), "10000," + df["rest"], df["rest"])
-        # any other case, add 0000, to the beginning of the string
-        condition = ~(df["rest"].str.match(r'^\d')) & ~(df["rest"].str.startswith("CAVOK"))
-        df["rest"] = np.where(condition, "0000," + df["rest"], df["rest"])
+    df = check_missing_visibility(df)
     df[["visibility","rest"]] = df["rest"].str.split(',', n=1, expand=True)
     weather_phenomena = {"BR":"Mist", "FG":"Fog", "HZ":"Haze", "RA":"Rain", "SN":"Snow", "TS":"Thunderstorm", "DZ":"Drizzle", "SH":"Showers", "GR":"Hail", "GS":"Small Hail", "FU":"Smoke", "SA":"Sand", "DU":"Dust", "SQ":"Squall", "FC":"Funnel Cloud", "SS":"Sandstorm", "DS":"Duststorm", "PO":"Dust/Sand Whirls", "PY":"Spray", "VA":"Volcanic Ash", "BC":"Patches", "BL":"Blowing", "DR":"Low Drifting", "FZ":"Freezing", "MI":"Shallow", "PR":"Partial", "VC":"Vicinity"}
     # check whether there is at least one weather phenomena, if not add NaN,
@@ -233,6 +228,16 @@ def check_wind(df):
     # check if wind ends with KT
     if ~(df["wind"].str.endswith("KT").all()):
         raise ValueError("df['wind'] does not end with KT")
+
+def check_missing_visibility(df):
+    # check if rest starts with number where rest is the rest of the string after wind
+    if ~(df["rest"].str.startswith(r'\d').all()):
+        # if the next value is CAVOK, then visibility is 10000 so add 10000, to the beginning of the string
+        df["rest"] = np.where(df["rest"].str.startswith("CAVOK"), "10000," + df["rest"], df["rest"])
+        # any other case, add 0000, to the beginning of the string
+        condition = ~(df["rest"].str.match(r'^\d')) & ~(df["rest"].str.startswith("CAVOK"))
+        df["rest"] = np.where(condition, "0000," + df["rest"], df["rest"])
+    return df
 
 if __name__ == "__main__":
     df = read_csv_first_n_entries('../dados.csv', n=100)
