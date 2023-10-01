@@ -16,7 +16,7 @@ def read_csv_first_n_entries(file_path, n=100, delimiter=',', encoding='utf-8'):
     """
     try:
         # Read the CSV file into a DataFrame, limiting the number of rows to 'n'.
-        df = pd.read_csv(file_path, nrows=n, delimiter=',', encoding='utf-8')
+        df = pd.read_csv(file_path, nrows=n, delimiter=delimiter, encoding=encoding)
         # Return the DataFrame.
         return df
     except FileNotFoundError:
