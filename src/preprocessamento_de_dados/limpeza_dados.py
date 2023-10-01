@@ -140,6 +140,10 @@ def clean_metaf(array):
 
     # Replace / with ,
     array = array.str.replace(r'/', ',', regex=True)
+    
+    # Remove =\n
+    array = array.str.replace(r'=\n', '', regex=True)
+    
     return array
 
 if __name__ == "__main__":
