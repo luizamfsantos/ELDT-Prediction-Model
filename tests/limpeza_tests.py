@@ -21,20 +21,19 @@ def check_report(df):
         raise ValueError("METAF not found in df['report']")
 
 if __name__ == "__main__":
-    # data_check_report = {
-    #     'hora': [1654041600000, 1654045200000],
-    #     'report': ['METAR', 'METAR'],
-    #     'station': ['SBGL', 'SBGL'],
-    #     'dt_origin': ['010000Z', '010100Z'],
-    #     'wind': ['25002KT', '02001KT'],
-    #     'visibility': [3000, 2000],
-    #     'weather': ['BR', 'BR'],
-    #     'clouds': ['OVC033', 'OVC011'],
-    #     'temperature': ['23/21', '22/21'],
-    #     'dew_point': ['21', '21'],
-    #     'altimeter (hPA)': ['Q1016=', 'Q1017='],
-    #     'aero': ['SBGL', 'SBSG']}
-    # df_check_report = pd.DataFrame(data_check_report)
-    # check_report(df_check_report)
-
-
+    data_check_report = {
+        'hora': [1654041600000, 1654045200000],
+        'report': ['METAR', 'METAR'],
+        'station': ['SBGL', 'SBGL'],
+        'dt_origin': ['010000Z', '010100Z'],
+        'wind': ['25002KT', '02001KT'],
+        'visibility': [3000, 2000],
+        'weather': ['BR', 'BR'],
+        'clouds': ['OVC033', 'OVC011'],
+        'temperature': ['23/21', '22/21'],
+        'dew_point': ['21', '21'],
+        'altimeter (hPA)': ['Q1016=', 'Q1017='],
+        'aero': ['SBGL', 'SBSG']}
+    df_check_report = pd.DataFrame(data_check_report)
+    check_report(df_check_report)
+    print("check_report(df_check_report) passed")

@@ -219,7 +219,7 @@ def check_phenomena(value, weather_phenomena):
 def check_report(df):
     # check if df["report"] == "METAF"
     if "METAF" not in df["report"].values:
-        ValueError("METAF not found in df['report']")
+        raise ValueError("METAF not found in df['report']")
 
 if __name__ == "__main__":
     df = read_csv_first_n_entries('../dados.csv', n=100)
