@@ -168,22 +168,20 @@ def expand_metaf(df):
     # check if df contains metaf column
     if "metaf" not in df.columns:
         return df
+    
     # clean metaf column
     df["metaf"] = clean_metaf(df["metaf"])
+
     # expand metaf column
     # columns = ["report", "station", "dt_origin", "wind", "visibility", "weather", "clouds","temperature", "dew_point","altimeter (hPA)"]
+    # separate report from the rest
     df[["report","rest"]] = df["metaf"].str.split(',', n=1, expand=True)
-    # check if df["report"] == "METAF"
-    if "METAF" not in df["report"].values:
-        ValueError("METAF not found in df['report']")
+    check_report(df) # check if df["report"] == "METAF"
+
+    # separate station from the rest
     df[["station","rest"]] = df["rest"].str.split(',', n=1, expand=True)
-    # check if df["station"] is in one of the keys aero = {"SBBR":"Brasilia", "SBCF":"Confins", "SBCT":"Curitiba", "SBFL":"Florianopolis", "SBGL":"Rio de Janeiro - Galeao", "SBGR":"Guarulhos", "SBKP":"Campinas", "SBPA":"Porto Alegre", "SBRF":"Recife", "SBRJ":"Rio de Janeiro - Santos Dumont", "SBSP":"Sao Paulo - Congonhas", "SBSV":"Salvador"}
-    aero = {"SBBR":"Brasilia", "SBCF":"Confins", "SBCT":"Curitiba", "SBFL":"Florianopolis", "SBGL":"Rio de Janeiro - Galeao", "SBGR":"Guarulhos", "SBKP":"Campinas", "SBPA":"Porto Alegre", "SBRF":"Recife", "SBRJ":"Rio de Janeiro - Santos Dumont", "SBSP":"Sao Paulo - Congonhas", "SBSV":"Salvador"}
-    aero_list = [*aero.keys()]
-    if df["station"].isna().any():
-        raise ValueError("df['station'] contains NaN")
-    if ~(df["station"].isin(aero_list).any()):
-        raise ValueError("df['station'] not in aero.keys()")
+    check_station(df) # check if station is one of the allowed values
+    
     df[["dt_origin","rest"]] = df["rest"].str.split(',', n=1, expand=True)
     # check if dt_origin ends with Z
     if ~(df["dt_origin"].str.endswith("Z").all()):
@@ -220,6 +218,12 @@ def check_report(df):
     # check if df["report"] == "METAF"
     if "METAF" not in df["report"].values:
         raise ValueError("METAF not found in df['report']")
+
+def check_station(df):
+    aero = {"SBBR":"Brasilia", "SBCF":"Confins", "SBCT":"Curitiba", "SBFL":"Florianopolis", "SBGL":"Rio de Janeiro - Galeao", "SBGR":"Guarulhos", "SBKP":"Campinas", "SBPA":"Porto Alegre", "SBRF":"Recife", "SBRJ":"Rio de Janeiro - Santos Dumont", "SBSP":"Sao Paulo - Congonhas", "SBSV":"Salvador"}
+    aero_list = [*aero.keys()]
+    if ~(df["station"].isin(aero_list).any()):
+        raise ValueError("df['station'] not in aero.keys()")
 
 if __name__ == "__main__":
     df = read_csv_first_n_entries('../dados.csv', n=100)
