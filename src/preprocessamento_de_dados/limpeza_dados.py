@@ -136,7 +136,7 @@ def clean_metaf(array):
     - array: The cleaned 'metaf' column of a DataFrame.
     """
     # Remove space after - 
-    array = array.str.replace(r'-\s', '-', regex=True)
+    array = array.str.replace(r'-\s+', '-', regex=True)
 
     # Remove =\n
     array = array.str.replace(r'=\n', '', regex=True)
