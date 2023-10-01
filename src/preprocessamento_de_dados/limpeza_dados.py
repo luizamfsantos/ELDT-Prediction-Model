@@ -164,49 +164,52 @@ def clean_metaf(array):
     
     return array
 
+import pandas as pd
+import numpy as np
+
 def expand_metaf(df):
-    # check if df contains metaf column
+    # Check if "metaf" column is present in the DataFrame
     if "metaf" not in df.columns:
         return df
-    # clean metaf column
-    df["metaf"] = clean_metaf(df["metaf"])
-    # expand metaf column
-    # columns = ["report", "station", "dt_origin", "wind", "visibility", "weather", "clouds","temperature", "dew_point","altimeter (hPA)"]
-    df[["report","rest"]] = df["metaf"].str.split(',', n=1, expand=True)
-    
-    check_report(df)
 
-    df[["station","rest"]] = df["rest"].str.split(',', n=1, expand=True)
-    # check if df["station"] is in one of the keys aero = {"SBBR":"Brasilia", "SBCF":"Confins", "SBCT":"Curitiba", "SBFL":"Florianopolis", "SBGL":"Rio de Janeiro - Galeao", "SBGR":"Guarulhos", "SBKP":"Campinas", "SBPA":"Porto Alegre", "SBRF":"Recife", "SBRJ":"Rio de Janeiro - Santos Dumont", "SBSP":"Sao Paulo - Congonhas", "SBSV":"Salvador"}
-    aero = {"SBBR":"Brasilia", "SBCF":"Confins", "SBCT":"Curitiba", "SBFL":"Florianopolis", "SBGL":"Rio de Janeiro - Galeao", "SBGR":"Guarulhos", "SBKP":"Campinas", "SBPA":"Porto Alegre", "SBRF":"Recife", "SBRJ":"Rio de Janeiro - Santos Dumont", "SBSP":"Sao Paulo - Congonhas", "SBSV":"Salvador"}
+    # Clean the "metaf" column
+    df["metaf"] = clean_metaf(df["metaf"])
+
+    # Split the "metaf" column into multiple columns
+    df[["report", "rest"]] = df["metaf"].str.split(',', n=1, expand=True)
+
+    # Check if "METAF" is present in the "report" column
+    if "METAF" not in df["report"].values:
+        raise ValueError("METAF not found in df['report']")
+
+    # Split the "rest" column further
+    df[["station", "rest"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # Validate "station" values
+    aero = {"SBBR": "Brasilia", "SBCF": "Confins", "SBCT": "Curitiba", "SBFL": "Florianopolis", "SBGL": "Rio de Janeiro - Galeao", "SBGR": "Guarulhos", "SBKP": "Campinas", "SBPA": "Porto Alegre", "SBRF": "Recife", "SBRJ": "Rio de Janeiro - Santos Dumont", "SBSP": "Sao Paulo - Congonhas", "SBSV": "Salvador"}
     aero_list = [*aero.keys()]
-    if df["station"].isna().any():
-        raise ValueError("df['station'] contains NaN")
-    if ~(df["station"].isin(aero_list).any()):
-        raise ValueError("df['station'] not in aero.keys()")
-    df[["dt_origin","rest"]] = df["rest"].str.split(',', n=1, expand=True)
-    # check if dt_origin ends with Z
-    if ~(df["dt_origin"].str.endswith("Z").all()):
+    if df["station"].isna().any() or not df["station"].isin(aero_list).all():
+        raise ValueError("Invalid values in df['station']")
+
+    # Split the "rest" column for other fields
+    df[["dt_origin", "rest"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # Check if "dt_origin" ends with "Z"
+    if not df["dt_origin"].str.endswith("Z").all():
         raise ValueError("df['dt_origin'] does not end with Z")
-    df[["wind","rest"]] = df["rest"].str.split(',', n=1, expand=True)
-    # check if wind ends with KT
-    if ~(df["wind"].str.endswith("KT").all()):
+
+    df[["wind", "rest"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # Check if "wind" ends with "KT"
+    if not df["wind"].str.endswith("KT").all():
         raise ValueError("df['wind'] does not end with KT")
-    # check if rest starts with number
-    if ~(df["rest"].str.startswith(r'\d').all()):
-        # if the next value is CAVOK, then visibility is 10000 so add 10000, to the beginning of the string
-        df["rest"] = np.where(df["rest"].str.startswith("CAVOK"), "10000," + df["rest"], df["rest"])
-        # any other case, add 0000, to the beginning of the string
-        condition = ~(df["rest"].str.match(r'^\d')) & ~(df["rest"].str.startswith("CAVOK"))
-        df["rest"] = np.where(condition, "0000," + df["rest"], df["rest"])
-    df[["visibility","rest"]] = df["rest"].str.split(',', n=1, expand=True)
-    weather_phenomena = {"BR":"Mist", "FG":"Fog", "HZ":"Haze", "RA":"Rain", "SN":"Snow", "TS":"Thunderstorm", "DZ":"Drizzle", "SH":"Showers", "GR":"Hail", "GS":"Small Hail", "FU":"Smoke", "SA":"Sand", "DU":"Dust", "SQ":"Squall", "FC":"Funnel Cloud", "SS":"Sandstorm", "DS":"Duststorm", "PO":"Dust/Sand Whirls", "PY":"Spray", "VA":"Volcanic Ash", "BC":"Patches", "BL":"Blowing", "DR":"Low Drifting", "FZ":"Freezing", "MI":"Shallow", "PR":"Partial", "VC":"Vicinity"}
-    # check whether there is at least one weather phenomena, if not add NaN,
-    df["rest"] = df["rest"].apply(lambda x: check_phenomena(x, weather_phenomena))
-    df[["weather","rest"]] = df["rest"].str.split(',', n=1, expand=True)
-    df[["clouds","rest"]] = df["rest"].str.split(',', n=1, expand=True)
-    df[["temperature","rest"]] = df["rest"].str.split(',', n=1, expand=True)
-    df[["dew_point","altimeter (hPA)"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # Check if "rest" starts with a number
+    df["rest"] = np.where(df["rest"].str.startswith("CAVOK"), "10000," + df["rest"], df["rest"])
+    df["rest"] = np.where(~df["rest"].str.match(r'^\d') & ~df["rest"].str.startswith("CAVOK"), "0000," + df["rest"], df["rest"])
+
+    # Split the remaining columns
+    df[["visibility", "weather", "clouds", "temperature", "dew_point", "altimeter (hPA)"]] = df["rest"].str.split(',', n=5, expand=True)
 
     return df
     
