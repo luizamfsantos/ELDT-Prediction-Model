@@ -84,7 +84,7 @@ if __name__ == "__main__":
         'altimeter (hPA)': ['Q1016=', 'Q1017='],
         'aero': ['SBGL', 'SBSG']
     }
-    
+
     data_missing_visibility = {
         'hora': [1654041600000, 1654045200000],
         'report': ['METAR', 'METAF'],
@@ -94,9 +94,20 @@ if __name__ == "__main__":
         'rest': ['BROVC03323/21Q1016', '2000']
     }
 
+    data_CAVOK = {
+        'hora': [1654041600000, 1654045200000],
+        'report': ['METAR', 'METAF'],
+        'station': ['XYZ', 'ABC'],  # These station codes are not in the 'aero' dictionary
+        'dt_origin': ['010000', '010100Z'],
+        'wind': ['25002', '02001KT'],
+        'rest': ['CAVOK23/21Q1016', '2000']
+    }
+
     # Create dataframes
     df_error = pd.DataFrame(data_error)
     df_no_error = pd.DataFrame(data_no_error)
+    df_missing_visibility = pd.DataFrame(data_missing_visibility)
+    df_CAVOK = pd.DataFrame(data_CAVOK)
 
     # Check if the function check_station raises an error
     try:
@@ -161,3 +172,15 @@ if __name__ == "__main__":
         print("check_wind(df_no_error) failed")
     else:
         print("check_wind(df_no_error) passed")
+
+    # Check if the function check_missing_visibility adds 0000, to the beginning of the string
+    if (check_missing_visibility(df_missing_visibility)["rest"].str.startswith("0000,")).any():
+        print("check_missing_visibility(df_missing_visibility) passed")
+    else:
+        print("check_missing_visibility(df_missing_visibility) failed")
+
+    # Check if the function check_missing_visibility adds 10000, to the beginning of the string
+    if (check_missing_visibility(df_CAVOK)["rest"].str.startswith("10000,")).any():
+        print("check_missing_visibility(df_CAVOK) passed")
+    else:
+        print("check_missing_visibility(df_CAVOK) failed")
