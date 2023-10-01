@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # Sample data for the dataframe that will raise an error
     data_error = {
         'hora': [1654041600000, 1654045200000],
-        'report': ['METAR', 'METAF'],
+        'report': ['METAD', 'METAF'],
         'station': ['XYZ', 'ABC'],  # These station codes are not in the 'aero' dictionary
         'dt_origin': ['010000', '010100Z'],
         'wind': ['25002', '02001KT'],
@@ -181,6 +181,14 @@ if __name__ == "__main__":
     missing_cols = ["COR", "AUTO", "NIL", "CAVOK"]
     for col in missing_cols:
         if col in add_missing_columns(df_METAR_raw,"metar").columns:
-            print(f"add_missing_columns(df_no_error) {col} passed")
+            print(f"add_missing_columns(df_no_error) add column {col} passed")
         else:
-            print(f"add_missing_columns(df_no_error){col} failed")
+            print(f"add_missing_columns(df_no_error) add column {col} failed")
+    
+    # Check if the function add_missing_columns removes words COR, AUTO, NIL from the metar column
+    drop_words = ["COR", "AUTO", "NIL"]
+    for word in drop_words:
+        if not (add_missing_columns(df_METAR_raw,"metar")["metar"].str.contains(word)).any():
+            print(f"add_missing_columns(df_no_error) remove {word} passed")
+        else:
+            print(f"add_missing_columns(df_no_error) remove {word} failed")

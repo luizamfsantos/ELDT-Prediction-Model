@@ -53,32 +53,32 @@ def clean_metaf(array):
     
     return array
 
-def expand_metaf(df):
+def expand_taf_metar(df, report="metaf"):
     """
-    Expand the 'metaf' column of a DataFrame.
+    Expand the 'metaf' or 'metar' column of a DataFrame.
 
     Parameters:
-    - df (DataFrame): A DataFrame containing a 'metaf' column.
+    - df (DataFrame): A DataFrame containing a 'metaf' or 'metar' column.
 
     Returns:
-    - DataFrame: A DataFrame containing the expanded 'metaf' column.
+    - DataFrame: A DataFrame containing the expanded 'metaf' or 'metar' column.
         new columns = ["COR", "AUTO", "NIL", "CAVOK", "report", "station", "dt_origin", "wind", "visibility", "weather", "clouds","temperature", "dew_point","altimeter (hPA)"]
     """
 
-    # check if df contains metaf column
-    if "metaf" not in df.columns:
+    # check if df contains metaf or metar column
+    if ("metaf" not in df.columns) and ("metar" not in df.columns):
         return df
     
     # create columns COR, AUTO, NIL, and CAVOK
-    df = add_missing_columns(df)
+    df = add_missing_columns(df,report)
     
     # clean metaf column
-    df["metaf"] = clean_metaf(df["metaf"])
+    df[report] = clean_metaf(df[report])
 
     # expand metaf column
     # separate report from the rest
-    df[["report","rest"]] = df["metaf"].str.split(',', n=1, expand=True)
-    check_report(df) # check if df["report"] == "METAF"
+    df[["report","rest"]] = df[report].str.split(',', n=1, expand=True)
+    check_report(df) # check if df["report"] == "METAF" or df["report"] == "METAR"
 
     # separate station from the rest
     df[["station","rest"]] = df["rest"].str.split(',', n=1, expand=True)
@@ -113,7 +113,7 @@ def expand_metaf(df):
     df[["dew_point","altimeter (hPA)"]] = df["rest"].str.split(',', n=1, expand=True)
 
     # drop rest and metaf column
-    df.drop(columns=["rest","metaf"], inplace=True)
+    df.drop(columns=["rest",report], inplace=True)
 
     return df
 
@@ -138,8 +138,8 @@ def add_missing_columns(df, report="metaf"):
     return df
 
 def check_report(df):
-    # Check if all values in df["report"] are equal to "METAF"
-    if not (df["report"] == "METAF").all():
+    # Check if all values in df["report"] are equal to "METAF" or "METAR"
+    if not (df["report"].isin(["METAF", "METAR"]).all()):
         raise ValueError("Not all values in df['report'] are equal to METAF")
 
 def check_station(df):
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     df = read_csv_first_n_entries('../dados.csv', n=100)
     if df is not None:
         df.dropna(subset=['metaf'], inplace=True)
-        df = expand_metaf(df)
+        df = expand_taf_metar(df)
         print(df.columns)
         print(df["altimeter (hPA)"])
         
