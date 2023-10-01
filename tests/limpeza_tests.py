@@ -20,6 +20,12 @@ def check_report(df):
     if "METAF" not in df["report"].values:
         raise ValueError("METAF not found in df['report']")
 
+def check_phenomena(value, weather_phenomena):
+    if value[:2] in weather_phenomena:
+        return value
+    else:
+        return "NaN," + value
+
 if __name__ == "__main__":
     data_check_report = {
         'hora': [1654041600000, 1654045200000],
