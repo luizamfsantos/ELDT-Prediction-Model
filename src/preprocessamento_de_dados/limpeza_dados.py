@@ -90,6 +90,10 @@ def expand_taf_metar(df, report="metaf"):
     
     # separate wind from the rest
     df[["wind","rest"]] = df["rest"].str.split(',', n=1, expand=True)
+    check_wind(df)
+
+    # check if wind has 2 components 
+    df = check_wind_2_components(df)
 
     # add visibility if missing
     df = check_missing_visibility(df)
@@ -157,6 +161,20 @@ def check_wind(df):
     # check if wind ends with KT
     if ~(df["wind"].str.endswith("KT").all()):
         raise ValueError("df['wind'] does not end with KT")
+
+def check_wind_2_components(df):
+    pattern = r'^(\d{3}V\d{3})'
+    mask = df["rest"].str.match(pattern, na=False)
+    
+    # Create a new DataFrame to store the extracted values
+    extracted_values = df.loc[mask, "rest"].str.extract(pattern)
+    extracted_values.columns = ["extracted_wind"]
+    
+    # Update the "wind" and "rest" columns separately
+    df.loc[mask, "wind"] = df.loc[mask, "wind"] + " " + extracted_values["extracted_wind"]
+    df.loc[mask, "rest"] = df.loc[mask, "rest"].str.replace(pattern + ",", "", regex=True)
+    
+    return df
 
 def check_missing_visibility(df):
     # check if rest starts with number where rest is the rest of the string after wind

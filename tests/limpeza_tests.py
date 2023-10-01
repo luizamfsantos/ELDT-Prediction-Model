@@ -56,6 +56,15 @@ if __name__ == "__main__":
         'rest': ['BROVC03323/21Q1016', '2000']
     }
 
+    data_wind_2_components = {
+        'hora': [1654041600000, 1654045200000],
+        'report': ['METAR', 'METAF'],
+        'station': ['XYZ', 'ABC'],  # These station codes are not in the 'aero' dictionary
+        'dt_origin': ['010000', '010100Z'],
+        'wind': ['25002', '02001KT'],
+        'rest': ['BROVC03323/21Q1016', '050V160,2000']
+    }
+
     data_CAVOK = {
         'hora': [1654041600000, 1654045200000],
         'report': ['METAR', 'METAF'],
@@ -103,6 +112,7 @@ if __name__ == "__main__":
     df_error = pd.DataFrame(data_error)
     df_no_error = pd.DataFrame(data_no_error)
     df_missing_visibility = pd.DataFrame(data_missing_visibility)
+    df_wind_2_components = pd.DataFrame(data_wind_2_components)
     df_CAVOK = pd.DataFrame(data_CAVOK)
     df_missing_phenomena = pd.DataFrame(data_missing_phenomena)
     df_with_phenomena = pd.DataFrame(data_with_phenomena)
@@ -216,3 +226,12 @@ if __name__ == "__main__":
         print("clean_taf_metar(df_METAR_raw) passed")
     else:
         print("clean_taf_metar(df_METAR_raw) failed")
+    
+    # Check if check_wind_2_components function adds 060V130 to the wind column
+    print(check_wind_2_components(df_wind_2_components))
+    # if check_wind_2_components(df_wind_2_components)["wind"].str.contains(r"{[0-9][0-9][0-9]}V{[0-9][0-9][0-9]}").any():
+    #     print("check_wind_2_components(df_wind_2_components) passed")
+    # else:
+    #     print(check_wind_2_components(df_wind_2_components)["wind"])
+    #     print(check_wind_2_components(df_wind_2_components)["rest"])
+    #     print("check_wind_2_components(df_wind_2_components) failed")
