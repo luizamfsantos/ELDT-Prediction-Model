@@ -135,6 +135,9 @@ def clean_metaf(array):
     Returns:
     - array: The cleaned 'metaf' column of a DataFrame.
     """
+    # Remove - 
+    array = array.str.replace(r'-', '', regex=True)
+    
     # Remove 9999
     array = array.str.replace(r' 9999', '', regex=True)
 
