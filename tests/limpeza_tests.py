@@ -75,13 +75,27 @@ if __name__ == "__main__":
         'rest': ['CAVOK,23/21,Q1016', 'BR,OVC21,23/21,Q1016']
     }
 
+    data_METAR_raw = [
+        [1654174800000, "METAR SBBR 021300Z 07006KT 030V090 CAVOK 23/11 Q1021=", "SBBR", "2022-06-02 13:00:00"],
+        [1654178400000, "METAR SBBR 021400Z 07004KT 010V120 CAVOK 25/12 Q1021=", "SBBR", "2022-06-02 14:00:00"],
+        [1654182000000, "METAR SBBR 021500Z 35004KT 290V090 CAVOK 27/11 Q1020=", "SBBR", "2022-06-02 15:00:00"],
+        [1654185600000, "METAR SBBR 021600Z 30005KT CAVOK 28/09 Q1019=", "SBBR", "2022-06-02 16:00:00"],
+        [1654189200000, "METAR SBBR 021700Z 19006KT 130V230 9999 FEW040 28/10 Q1018=", "SBBR", "2022-06-02 17:00:00"],
+        [1654182000000, "METAR SBCT 021500Z VRB02KT 5000 -RA BKN014 OVC050 14/14 Q1019=", "SBCT", "2022-06-02 15:00:00"],
+        [1654185600000, "METAR COR SBCT 021600Z 17003KT 6000 -RA BKN012 OVC050 14/14 Q1018=", "SBCT", "2022-06-02 16:00:00"],
+        [1654095600000, "METAR SBCF 011500Z 12007KT 060V210 9999 FEW030 25/16 Q1019=", "SBCF", "2022-06-01 15:00:00"],
+        [1654099200000, "METAR SBCF 011600Z 09005KT 030V170 9999 FEW035 26/16 Q1018=", "SBCF", "2022-06-01 16:00:00"]
+    ]
+
+    columns_METAR_raw = ["hora", "metar", "aero", "hora_dt"]
+
     # Create dataframes
     df_error = pd.DataFrame(data_error)
     df_no_error = pd.DataFrame(data_no_error)
     df_missing_visibility = pd.DataFrame(data_missing_visibility)
     df_CAVOK = pd.DataFrame(data_CAVOK)
     df_missing_phenomena = pd.DataFrame(data_missing_phenomena)
-
+    df_METAR_raw = pd.DataFrame(data_METAR_raw, columns=columns_METAR_raw)
     # Check if the function check_station raises an error
     try:
         check_station(df_error)
@@ -162,3 +176,11 @@ if __name__ == "__main__":
         print("check_missing_phenomena(df_missing_phenomena) passed")
     else:
         print("check_missing_phenomena(df_missing_phenomena) failed")
+
+    # Check if the function add_missing_columns adds the columns COR, AUTO, NIL, and CAVOK
+    missing_cols = ["COR", "AUTO", "NIL", "CAVOK"]
+    for col in missing_cols:
+        if col in add_missing_columns(df_METAR_raw,"metar").columns:
+            print(f"add_missing_columns(df_no_error) {col} passed")
+        else:
+            print(f"add_missing_columns(df_no_error){col} failed")

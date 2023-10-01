@@ -58,6 +58,9 @@ def expand_metaf(df):
     if "metaf" not in df.columns:
         return df
     
+    # create columns COR, AUTO, NIL, and CAVOK
+    df = add_missing_columns(df)
+    
     # clean metaf column
     df["metaf"] = clean_metaf(df["metaf"])
 
@@ -101,6 +104,26 @@ def expand_metaf(df):
 
     # drop rest column
     df.drop(columns=["rest"], inplace=True)
+
+    return df
+
+def add_missing_columns(df, report="metaf"):
+    # create columns COR, AUTO, NIL, and CAVOK with 0s
+    df["COR"] = 0
+    df["AUTO"] = 0
+    df["NIL"] = 0
+    df["CAVOK"] = 0
+
+    # update columns COR, AUTO, NIL, and CAVOK with 1s if they are present in the metaf column
+    df["COR"] = np.where(df[report].str.contains("COR"), 1, df["COR"])
+    df["AUTO"] = np.where(df[report].str.contains("AUTO"), 1, df["AUTO"])
+    df["NIL"] = np.where(df[report].str.contains("NIL"), 1, df["NIL"])
+    df["CAVOK"] = np.where(df[report].str.contains("CAVOK"), 1, df["CAVOK"])
+
+    # remove the words COR, AUTO, NIL from the metaf column
+    df[report] = df[report].str.replace("COR", "", regex=False)
+    df[report] = df[report].str.replace("AUTO", "", regex=False)
+    df[report] = df[report].str.replace("NIL", "", regex=False)
 
     return df
 
