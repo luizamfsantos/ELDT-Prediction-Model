@@ -149,48 +149,14 @@ def clean_metaf(array):
 
     # Replace / with ,
     array = array.str.replace(r'/', ',', regex=True)
-
-    # Fill missing visibility with 10000 for CAVOK or 0000 for other cases
-    array = format_missing_visibility(array)
     
     return array
 
 # Fill missing visibility with 10000 for CAVOK or 0000 for other cases
-def format_missing_visibility(metaf_data):
-    """
-    Fill missing visibility with 10000 for CAVOK or 0000 for other cases.
-
-    Parameters:
-    - metaf_data (array): The 'metaf' column of a DataFrame.
-    
-    Returns:
-    - array: The 'metaf' column of a DataFrame with missing visibility filled.
-    """
-    # Check if the entry is a float, if it is, turn it into a string
-    metaf_data = metaf_data.apply(lambda x: str(x) if isinstance(x, float) else x)
-
-    # Split the string into an array of strings
-    metaf_data = metaf_data.str.split(',')
-
-    # Iterate through the array of strings
-    for i in range(len(metaf_data)):
-        # If the string contains 'CAVOK', replace the missing visibility with 10000
-        if 'CAVOK' in metaf_data[i]:
-            metaf_data[i] = [x if x != '' else '10000' for x in metaf_data[i]]
-        # Otherwise, replace the missing visibility with 0000
-        else:
-            metaf_data[i] = [x if x != '' else '0000' for x in metaf_data[i]]
-    
-    # Join the array of strings back into a single string
-    metaf_data = metaf_data.str.join(',')
-    
-    return metaf_data
 
 
 if __name__ == "__main__":
-    # Replace 'your_file.csv' with the path to your CSV file.
-    # You can also specify the number of lines to read as the second argument.
-    df = read_csv_first_n_entries('../dados.csv', n=5)
+    df = read_csv_first_n_entries('../dados.csv', n=100)
     if df is not None:
         df.fillna(0, inplace=True)
         print(df["metaf"])
