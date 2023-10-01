@@ -192,3 +192,9 @@ if __name__ == "__main__":
             print(f"add_missing_columns(df_no_error) remove {word} passed")
         else:
             print(f"add_missing_columns(df_no_error) remove {word} failed")
+    
+    # Check if clean_taf_metar function can clean METAR and METAF
+    if clean_taf_metar(df_METAR_raw["metar"]).str.startswith("METAR").all():
+        print("clean_taf_metar(df_METAR_raw) passed")
+    else:
+        print("clean_taf_metar(df_METAR_raw) failed")
