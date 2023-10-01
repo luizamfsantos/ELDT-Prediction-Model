@@ -135,20 +135,20 @@ def clean_metaf(array):
     Returns:
     - array: The cleaned 'metaf' column of a DataFrame.
     """
-    # Remove - 
-    array = array.str.replace(r'-', '', regex=True)
-    
-    # Remove 9999
-    array = array.str.replace(r' 9999', '', regex=True)
+    # Remove space after - 
+    array = array.str.replace(r'-\s', '-', regex=True)
+
+    # Remove =\n
+    array = array.str.replace(r'=\n', '', regex=True)
+
+    # Remove spaces at the beginning and end of the string
+    array = array.str.strip()
 
     # Replace multiple spaces with a single comma
     array = array.str.replace(r'\s+', ',', regex=True)
 
     # Replace / with ,
     array = array.str.replace(r'/', ',', regex=True)
-    
-    # Remove =\n
-    array = array.str.replace(r'=\n', '', regex=True)
     
     return array
 
