@@ -186,10 +186,9 @@ def expand_metaf(df):
     df[["dt_origin","rest"]] = df["rest"].str.split(',', n=1, expand=True)
     check_dt_origin(df)
     
+    # separate wind from the rest
     df[["wind","rest"]] = df["rest"].str.split(',', n=1, expand=True)
-    # check if wind ends with KT
-    if ~(df["wind"].str.endswith("KT").all()):
-        raise ValueError("df['wind'] does not end with KT")
+
     # check if rest starts with number
     if ~(df["rest"].str.startswith(r'\d').all()):
         # if the next value is CAVOK, then visibility is 10000 so add 10000, to the beginning of the string
@@ -229,6 +228,11 @@ def check_dt_origin(df):
     # check if dt_origin ends with Z
     if ~(df["dt_origin"].str.endswith("Z").all()):
         raise ValueError("df['dt_origin'] is not a valid dt_origin: correct format is day hour minute Z")
+
+def check_wind(df):
+    # check if wind ends with KT
+    if ~(df["wind"].str.endswith("KT").all()):
+        raise ValueError("df['wind'] does not end with KT")
 
 if __name__ == "__main__":
     df = read_csv_first_n_entries('../dados.csv', n=100)

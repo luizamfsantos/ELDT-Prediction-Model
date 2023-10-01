@@ -37,6 +37,10 @@ def check_dt_origin(df):
     if ~(df["dt_origin"].str.endswith("Z").all()):
         raise ValueError("df['dt_origin'] is not a valid dt_origin: correct format is day hour minute Z")
 
+def check_wind(df):
+    # check if wind ends with KT
+    if ~(df["wind"].str.endswith("KT").all()):
+        raise ValueError("df['wind'] does not end with KT")
 
 if __name__ == "__main__":
     # Sample data for the dataframe that won't raise an error
@@ -61,7 +65,7 @@ if __name__ == "__main__":
         'report': ['METAR', 'METAF'],
         'station': ['XYZ', 'ABC'],  # These station codes are not in the 'aero' dictionary
         'dt_origin': ['010000', '010100Z'],
-        'wind': ['25002KT', '02001KT'],
+        'wind': ['25002', '02001KT'],
         'visibility': [3000, 2000],
         'weather': ['BR', 'BR'],
         'clouds': ['OVC033', 'OVC011'],
@@ -122,3 +126,19 @@ if __name__ == "__main__":
         print("check_dt_origin(df_no_error) failed")
     else:
         print("check_dt_origin(df_no_error) passed")
+
+    # Check if the function check_wind raises an error
+    try:
+        check_wind(df_error)
+    except ValueError:
+        print("check_wind(df_error) passed")
+    else:
+        print("check_wind(df_error) failed")
+    
+    # Check if the function check_wind doesn't raise an error
+    try:
+        check_wind(df_no_error)
+    except ValueError:
+        print("check_wind(df_no_error) failed")
+    else:
+        print("check_wind(df_no_error) passed")
