@@ -100,7 +100,19 @@ import re
 # ]
 
 # /cat-62: so consegui erro 500 (Internal Server Error) - Luiza (2023-09-18)
-
+# Brasília (SBBR)
+# Confins (SBCF)
+# Curitiba (SBCT)
+# Florianópolis (SBFL)
+# Rio de Janeiro - Galeão (SBGL)
+# Guarulhos (SBGR)
+# Campinas (SBKP)
+# Porto Alegre (SBPA)
+# Recife (SBRF)
+# Rio de Janeiro - Santos Dumont (SBRJ)
+# São Paulo - Congonhas (SBSP)
+# Salvador (SBSV)
+# aero = {"SBBR":"Brasilia", "SBCF":"Confins", "SBCT":"Curitiba", "SBFL":"Florianopolis", "SBGL":"Rio de Janeiro - Galeao", "SBGR":"Guarulhos", "SBKP":"Campinas", "SBPA":"Porto Alegre", "SBRF":"Recife", "SBRJ":"Rio de Janeiro - Santos Dumont", "SBSP":"Sao Paulo - Congonhas", "SBSV":"Salvador"}
 
 def read_csv_first_n_entries(file_path, n=100, delimiter=',', encoding='utf-8'):
     """
@@ -149,50 +161,110 @@ def clean_metaf(array):
 
     # Replace / with ,
     array = array.str.replace(r'/', ',', regex=True)
-
-    # Fill missing visibility with 10000 for CAVOK or 0000 for other cases
-    array = format_missing_visibility(array)
     
     return array
 
-# Fill missing visibility with 10000 for CAVOK or 0000 for other cases
-def format_missing_visibility(metaf_data):
-    """
-    Fill missing visibility with 10000 for CAVOK or 0000 for other cases.
-
-    Parameters:
-    - metaf_data (array): The 'metaf' column of a DataFrame.
+def expand_metaf(df):
+    # check if df contains metaf column
+    if "metaf" not in df.columns:
+        return df
     
-    Returns:
-    - array: The 'metaf' column of a DataFrame with missing visibility filled.
-    """
-    # Check if the entry is a float, if it is, turn it into a string
-    metaf_data = metaf_data.apply(lambda x: str(x) if isinstance(x, float) else x)
+    # clean metaf column
+    df["metaf"] = clean_metaf(df["metaf"])
 
-    # Split the string into an array of strings
-    metaf_data = metaf_data.str.split(',')
+    # expand metaf column
+    # columns = ["report", "station", "dt_origin", "wind", "visibility", "weather", "clouds","temperature", "dew_point","altimeter (hPA)"]
+    # separate report from the rest
+    df[["report","rest"]] = df["metaf"].str.split(',', n=1, expand=True)
+    check_report(df) # check if df["report"] == "METAF"
 
-    # Iterate through the array of strings
-    for i in range(len(metaf_data)):
-        # If the string contains 'CAVOK', replace the missing visibility with 10000
-        if 'CAVOK' in metaf_data[i]:
-            metaf_data[i] = [x if x != '' else '10000' for x in metaf_data[i]]
-        # Otherwise, replace the missing visibility with 0000
+    # separate station from the rest
+    df[["station","rest"]] = df["rest"].str.split(',', n=1, expand=True)
+    check_station(df) # check if station is one of the allowed values
+    
+    # separate dt_origin from the rest
+    df[["dt_origin","rest"]] = df["rest"].str.split(',', n=1, expand=True)
+    check_dt_origin(df)
+    
+    # separate wind from the rest
+    df[["wind","rest"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # add visibility if missing
+    df = check_missing_visibility(df)
+
+    # separate visibility from the rest
+    df[["visibility","rest"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # check whether there is at least one weather phenomena, if not add NaN,
+    df = check_missing_phenomena(df)
+
+    # separate weather from the rest
+    df[["weather","rest"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # separate clouds from the rest
+    df[["clouds","rest"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # separate temperature from the rest
+    df[["temperature","rest"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # separate dew_point from altimeter (hPA)
+    df[["dew_point","altimeter (hPA)"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # drop rest column
+    df.drop(columns=["rest"], inplace=True)
+
+    return df
+
+def check_report(df):
+    # Check if all values in df["report"] are equal to "METAF"
+    if not (df["report"] == "METAF").all():
+        raise ValueError("Not all values in df['report'] are equal to METAF")
+
+def check_station(df):
+    aero = {"SBBR":"Brasilia", "SBCF":"Confins", "SBCT":"Curitiba", "SBFL":"Florianopolis", "SBGL":"Rio de Janeiro - Galeao", "SBGR":"Guarulhos", "SBKP":"Campinas", "SBPA":"Porto Alegre", "SBRF":"Recife", "SBRJ":"Rio de Janeiro - Santos Dumont", "SBSP":"Sao Paulo - Congonhas", "SBSV":"Salvador"}
+    aero_list = [*aero.keys()]
+    if ~(df["station"].isin(aero_list).any()):
+        raise ValueError("df['station'] not in aero.keys()")
+
+def check_dt_origin(df):
+    # check if dt_origin ends with Z
+    if ~(df["dt_origin"].str.endswith("Z").all()):
+        raise ValueError("df['dt_origin'] is not a valid dt_origin: correct format is day hour minute Z")
+
+def check_wind(df):
+    # check if wind ends with KT
+    if ~(df["wind"].str.endswith("KT").all()):
+        raise ValueError("df['wind'] does not end with KT")
+
+def check_missing_visibility(df):
+    # check if rest starts with number where rest is the rest of the string after wind
+    if ~(df["rest"].str.startswith(r'\d').all()):
+        # if the next value is CAVOK, then visibility is 10000 so add 10000, to the beginning of the string
+        df["rest"] = np.where(df["rest"].str.startswith("CAVOK"), "10000," + df["rest"], df["rest"])
+        # any other case, add 0000, to the beginning of the string
+        condition = ~(df["rest"].str.match(r'^\d')) & ~(df["rest"].str.startswith("CAVOK"))
+        df["rest"] = np.where(condition, "0000," + df["rest"], df["rest"])
+    return df
+
+def check_missing_phenomena(df):
+    weather_phenomena = {"BR":"Mist", "FG":"Fog", "HZ":"Haze", "RA":"Rain", "SN":"Snow", "TS":"Thunderstorm", "DZ":"Drizzle", "SH":"Showers", "GR":"Hail", "GS":"Small Hail", "FU":"Smoke", "SA":"Sand", "DU":"Dust", "SQ":"Squall", "FC":"Funnel Cloud", "SS":"Sandstorm", "DS":"Duststorm", "PO":"Dust/Sand Whirls", "PY":"Spray", "VA":"Volcanic Ash", "BC":"Patches", "BL":"Blowing", "DR":"Low Drifting", "FZ":"Freezing", "MI":"Shallow", "PR":"Partial", "VC":"Vicinity"}
+    result = []
+
+    for row in df["rest"]:
+        if row[:2] in weather_phenomena:
+            result.append(row)
         else:
-            metaf_data[i] = [x if x != '' else '0000' for x in metaf_data[i]]
+            result.append("NaN," + row)
     
-    # Join the array of strings back into a single string
-    metaf_data = metaf_data.str.join(',')
-    
-    return metaf_data
-
+    # replace the rest column with the result list
+    df["rest"] = result
+    return df
 
 if __name__ == "__main__":
-    # Replace 'your_file.csv' with the path to your CSV file.
-    # You can also specify the number of lines to read as the second argument.
-    df = read_csv_first_n_entries('../dados.csv', n=5)
+    df = read_csv_first_n_entries('../dados.csv', n=100)
     if df is not None:
-        df.fillna(0, inplace=True)
-        print(df["metaf"])
-        df["metaf"] = clean_metaf(df["metaf"])
-        print(df["metaf"])
+        df.dropna(subset=['metaf'], inplace=True)
+        df = expand_metaf(df)
+        print(df.columns)
+        print(df["altimeter (hPA)"])
+        
