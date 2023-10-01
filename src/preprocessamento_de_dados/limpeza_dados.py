@@ -54,6 +54,17 @@ def clean_metaf(array):
     return array
 
 def expand_metaf(df):
+    """
+    Expand the 'metaf' column of a DataFrame.
+
+    Parameters:
+    - df (DataFrame): A DataFrame containing a 'metaf' column.
+
+    Returns:
+    - DataFrame: A DataFrame containing the expanded 'metaf' column.
+        new columns = ["COR", "AUTO", "NIL", "CAVOK", "report", "station", "dt_origin", "wind", "visibility", "weather", "clouds","temperature", "dew_point","altimeter (hPA)"]
+    """
+
     # check if df contains metaf column
     if "metaf" not in df.columns:
         return df
@@ -65,7 +76,6 @@ def expand_metaf(df):
     df["metaf"] = clean_metaf(df["metaf"])
 
     # expand metaf column
-    # columns = ["report", "station", "dt_origin", "wind", "visibility", "weather", "clouds","temperature", "dew_point","altimeter (hPA)"]
     # separate report from the rest
     df[["report","rest"]] = df["metaf"].str.split(',', n=1, expand=True)
     check_report(df) # check if df["report"] == "METAF"
