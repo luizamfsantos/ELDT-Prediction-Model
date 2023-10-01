@@ -23,7 +23,7 @@ if __name__ == "__main__":
         'dt_origin': ['010000Z', '010100Z'],
         'wind': ['25002KT', '02001KT'],
         'visibility': [3000, 2000],
-        'weather': ['BR', 'BR'],
+        'weather': ['BR', '-PA'],
         'clouds': ['OVC033', 'OVC011'],
         'temperature': ['23/21', '22/21'],
         'dew_point': ['21', '21'],
@@ -68,11 +68,21 @@ if __name__ == "__main__":
     data_missing_phenomena = {
         'hora': [1654041600000, 1654045200000],
         'report': ['METAR', 'METAF'],
-        'station': ['XYZ', 'ABC'],  # These station codes are not in the 'aero' dictionary
+        'station': ['XYZ', 'ABC'],  
         'dt_origin': ['010000', '010100Z'],
         'wind': ['25002', '02001KT'],
         'visibility': [3000, 2000],
         'rest': ['CAVOK,23/21,Q1016', 'BR,OVC21,23/21,Q1016']
+    }
+
+    data_with_phenomena = {
+        'hora': [1654041600000, 1654045200000],
+        'report': ['METAR', 'METAF'],
+        'station': ['XYZ', 'ABC'],  
+        'dt_origin': ['010000', '010100Z'],
+        'wind': ['25002', '02001KT'],
+        'visibility': [3000, 2000],
+        'rest': ['-PA,OVC22,23/21,Q1016', 'BR,OVC21,23/21,Q1016']
     }
 
     data_METAR_raw = [
@@ -95,6 +105,7 @@ if __name__ == "__main__":
     df_missing_visibility = pd.DataFrame(data_missing_visibility)
     df_CAVOK = pd.DataFrame(data_CAVOK)
     df_missing_phenomena = pd.DataFrame(data_missing_phenomena)
+    df_with_phenomena = pd.DataFrame(data_with_phenomena)
     df_METAR_raw = pd.DataFrame(data_METAR_raw, columns=columns_METAR_raw)
     # Check if the function check_station raises an error
     try:
@@ -172,10 +183,17 @@ if __name__ == "__main__":
     else:
         print("check_missing_visibility(df_CAVOK) failed")
     
+    # Check if the function check_missing_phenomena adds NaN, to the beginning of the string
     if check_missing_phenomena(df_missing_phenomena)["rest"].str.strip().str.startswith("NaN,").any():
         print("check_missing_phenomena(df_missing_phenomena) passed")
     else:
         print("check_missing_phenomena(df_missing_phenomena) failed")
+    
+    # Check if the function check_missing_phenomena doesn't add NaN, to the beginning of the string on the 2 cases
+    if check_missing_phenomena(df_with_phenomena)["rest"].str.strip().str.startswith("NaN,").any():
+        print("check_missing_phenomena(df_no_error) failed")
+    else:
+        print("check_missing_phenomena(df_no_error) passed")
 
     # Check if the function add_missing_columns adds the columns COR, AUTO, NIL, and CAVOK
     missing_cols = ["COR", "AUTO", "NIL", "CAVOK"]
