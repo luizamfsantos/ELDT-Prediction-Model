@@ -14,58 +14,6 @@ sys.path.append(project_root)
 # Import the function to be tested
 from src.preprocessamento_de_dados.limpeza_dados import *
 
-
-def check_report(df):
-    # Check if all values in df["report"] are equal to "METAF"
-    if not (df["report"] == "METAF").all():
-        raise ValueError("Not all values in df['report'] are equal to METAF")
-
-def check_phenomena(value, weather_phenomena):
-    if value[:2] in weather_phenomena:
-        return value
-    else:
-        return "NaN," + value
-    
-def check_station(df):
-    aero = {"SBBR":"Brasilia", "SBCF":"Confins", "SBCT":"Curitiba", "SBFL":"Florianopolis", "SBGL":"Rio de Janeiro - Galeao", "SBGR":"Guarulhos", "SBKP":"Campinas", "SBPA":"Porto Alegre", "SBRF":"Recife", "SBRJ":"Rio de Janeiro - Santos Dumont", "SBSP":"Sao Paulo - Congonhas", "SBSV":"Salvador"}
-    aero_list = [*aero.keys()]
-    if ~(df["station"].isin(aero_list).any()):
-        raise ValueError("df['station'] not in aero.keys()")
-    
-def check_dt_origin(df):
-    # check if dt_origin ends with Z
-    if ~(df["dt_origin"].str.endswith("Z").all()):
-        raise ValueError("df['dt_origin'] is not a valid dt_origin: correct format is day hour minute Z")
-
-def check_wind(df):
-    # check if wind ends with KT
-    if ~(df["wind"].str.endswith("KT").all()):
-        raise ValueError("df['wind'] does not end with KT")
-
-def check_missing_visibility(df):
-    # check if rest starts with number where rest is the rest of the string after wind
-    if ~(df["rest"].str.startswith(r'\d').all()):
-        # if the next value is CAVOK, then visibility is 10000 so add 10000, to the beginning of the string
-        df["rest"] = np.where(df["rest"].str.startswith("CAVOK"), "10000," + df["rest"], df["rest"])
-        # any other case, add 0000, to the beginning of the string
-        condition = ~(df["rest"].str.match(r'^\d')) & ~(df["rest"].str.startswith("CAVOK"))
-        df["rest"] = np.where(condition, "0000," + df["rest"], df["rest"])
-    return df
-
-def check_missing_phenomena(df):
-    weather_phenomena = {"BR":"Mist", "FG":"Fog", "HZ":"Haze", "RA":"Rain", "SN":"Snow", "TS":"Thunderstorm", "DZ":"Drizzle", "SH":"Showers", "GR":"Hail", "GS":"Small Hail", "FU":"Smoke", "SA":"Sand", "DU":"Dust", "SQ":"Squall", "FC":"Funnel Cloud", "SS":"Sandstorm", "DS":"Duststorm", "PO":"Dust/Sand Whirls", "PY":"Spray", "VA":"Volcanic Ash", "BC":"Patches", "BL":"Blowing", "DR":"Low Drifting", "FZ":"Freezing", "MI":"Shallow", "PR":"Partial", "VC":"Vicinity"}
-    result = []
-
-    for row in df["rest"]:
-        if row[:2] in weather_phenomena:
-            result.append(row)
-        else:
-            result.append("NaN," + row)
-    
-    # replace the rest column with the result list
-    df["rest"] = result
-    return df
-
 if __name__ == "__main__":
     # Sample data for the dataframe that won't raise an error
     data_no_error = {
