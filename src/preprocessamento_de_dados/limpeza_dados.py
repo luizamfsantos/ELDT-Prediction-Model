@@ -197,10 +197,21 @@ def expand_metaf(df):
 
     # check whether there is at least one weather phenomena, if not add NaN,
     df = check_missing_phenomena(df)
+
+    # separate weather from the rest
     df[["weather","rest"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # separate clouds from the rest
     df[["clouds","rest"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # separate temperature from the rest
     df[["temperature","rest"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # separate dew_point from altimeter (hPA)
     df[["dew_point","altimeter (hPA)"]] = df["rest"].str.split(',', n=1, expand=True)
+
+    # drop rest column
+    df.drop(columns=["rest"], inplace=True)
 
     return df
 
@@ -255,4 +266,5 @@ if __name__ == "__main__":
         df.dropna(subset=['metaf'], inplace=True)
         df = expand_metaf(df)
         print(df.columns)
+        print(df["altimeter (hPA)"])
         
