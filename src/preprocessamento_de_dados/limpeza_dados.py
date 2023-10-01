@@ -112,8 +112,8 @@ def expand_metaf(df):
     # separate dew_point from altimeter (hPA)
     df[["dew_point","altimeter (hPA)"]] = df["rest"].str.split(',', n=1, expand=True)
 
-    # drop rest column
-    df.drop(columns=["rest"], inplace=True)
+    # drop rest and metaf column
+    df.drop(columns=["rest","metaf"], inplace=True)
 
     return df
 
