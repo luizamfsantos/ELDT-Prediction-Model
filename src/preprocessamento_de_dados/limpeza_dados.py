@@ -1,6 +1,7 @@
 # import libraries
 import pandas as pd
 import numpy as np
+import re
 
 # /bimtra: lista de dicionarios com: "flightid", "origem", "destino", "dt_dep", "dt_arr"
 # flightid: string - unique id
@@ -124,9 +125,29 @@ def read_csv_first_n_entries(file_path, n=100, delimiter=',', encoding='utf-8'):
         print(f"An error occurred: {str(e)}")
         return None
 
+def clean_metaf(array):
+    """
+    Clean the 'metaf' column of a DataFrame.
+
+    Parameters:
+    - array (array): The 'metaf' column of a DataFrame.
+    
+    Returns:
+    - array: The cleaned 'metaf' column of a DataFrame.
+    """
+    # Replace multiple spaces with a single comma
+    array = array.str.replace(r'\s+', ',', regex=True)
+
+    # Replace / with ,
+    array = array.str.replace(r'/', ',', regex=True)
+    return array
+
 if __name__ == "__main__":
     # Replace 'your_file.csv' with the path to your CSV file.
     # You can also specify the number of lines to read as the second argument.
-    df = read_csv_first_n_entries('../dados.csv', n=50)
+    df = read_csv_first_n_entries('../dados.csv', n=5)
     if df is not None:
-        print(df)
+        df.fillna(0, inplace=True)
+        print(df["metaf"])
+        df["metaf"] = clean_metaf(df["metaf"])
+        print(df["metaf"])
