@@ -20,7 +20,6 @@ def check_report(df):
     if not (df["report"] == "METAF").all():
         raise ValueError("Not all values in df['report'] are equal to METAF")
 
-
 def check_phenomena(value, weather_phenomena):
     if value[:2] in weather_phenomena:
         return value
