@@ -174,6 +174,8 @@ def check_missing_phenomena(df):
     for row in df["rest"]:
         if row[:2] in weather_phenomena:
             result.append(row)
+        elif row[0] in ["-","+"]:
+            result.append(row)
         else:
             result.append("NaN," + row)
     
