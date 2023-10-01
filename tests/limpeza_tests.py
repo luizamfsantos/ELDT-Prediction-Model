@@ -1,14 +1,18 @@
 import pandas as pd
+import sys
 import os
 
-# Get the current script's directory
-script_dir = os.path.dirname(os.path.abspath(__file__))
+# Get the directory containing this script
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Set the working directory to the project root
-project_root = os.path.abspath(os.path.join(script_dir, '..'))
-os.chdir(project_root)
+# Get the parent directory (root) of the current directory
+project_root = os.path.dirname(current_dir)
 
-from preprocessamento_de_dados.limpeza_dados import *
+# Add the project root directory to sys.path
+sys.path.append(project_root)
+
+# Import the function to be tested
+from src.preprocessamento_de_dados.limpeza_dados import *
 
 
 def check_report(df):
