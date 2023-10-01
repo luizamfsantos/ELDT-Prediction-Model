@@ -195,7 +195,7 @@ class APIClient:
 # Example usage:
 if __name__ == "__main__":
     base_url = "http://montreal.icea.decea.mil.br:5002/api/v1"
-    token_file = "../virtual_token.txt"  # MODIFY THIS FOR YOUR TOKEN FILE
+    token_file = "../../../virtual_token.txt"  # MODIFY THIS FOR YOUR TOKEN FILE
     api = APIClient(token_file)
 
     first_day = datetime(2022, 6, 1)
