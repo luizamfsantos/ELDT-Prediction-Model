@@ -135,6 +135,9 @@ def clean_metaf(array):
     Returns:
     - array: The cleaned 'metaf' column of a DataFrame.
     """
+    # Remove 9999
+    array = array.str.replace(r' 9999', '', regex=True)
+
     # Replace multiple spaces with a single comma
     array = array.str.replace(r'\s+', ',', regex=True)
 
