@@ -237,8 +237,17 @@ def check_missing_visibility(df):
 
 def check_missing_phenomena(df):
     weather_phenomena = {"BR":"Mist", "FG":"Fog", "HZ":"Haze", "RA":"Rain", "SN":"Snow", "TS":"Thunderstorm", "DZ":"Drizzle", "SH":"Showers", "GR":"Hail", "GS":"Small Hail", "FU":"Smoke", "SA":"Sand", "DU":"Dust", "SQ":"Squall", "FC":"Funnel Cloud", "SS":"Sandstorm", "DS":"Duststorm", "PO":"Dust/Sand Whirls", "PY":"Spray", "VA":"Volcanic Ash", "BC":"Patches", "BL":"Blowing", "DR":"Low Drifting", "FZ":"Freezing", "MI":"Shallow", "PR":"Partial", "VC":"Vicinity"}
-    return ["NaN," + value if value[:2] not in weather_phenomena else value for value in df["rest"]]
+    result = []
 
+    for row in df["rest"]:
+        if row[:2] in weather_phenomena:
+            result.append(row)
+        else:
+            result.append("NaN," + row)
+    
+    # replace the rest column with the result list
+    df["rest"] = result
+    return df
 
 if __name__ == "__main__":
     df = read_csv_first_n_entries('../dados.csv', n=100)

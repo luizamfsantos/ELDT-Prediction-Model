@@ -52,6 +52,20 @@ def check_missing_visibility(df):
         df["rest"] = np.where(condition, "0000," + df["rest"], df["rest"])
     return df
 
+def check_missing_phenomena(df):
+    weather_phenomena = {"BR":"Mist", "FG":"Fog", "HZ":"Haze", "RA":"Rain", "SN":"Snow", "TS":"Thunderstorm", "DZ":"Drizzle", "SH":"Showers", "GR":"Hail", "GS":"Small Hail", "FU":"Smoke", "SA":"Sand", "DU":"Dust", "SQ":"Squall", "FC":"Funnel Cloud", "SS":"Sandstorm", "DS":"Duststorm", "PO":"Dust/Sand Whirls", "PY":"Spray", "VA":"Volcanic Ash", "BC":"Patches", "BL":"Blowing", "DR":"Low Drifting", "FZ":"Freezing", "MI":"Shallow", "PR":"Partial", "VC":"Vicinity"}
+    result = []
+
+    for row in df["rest"]:
+        if row[:2] in weather_phenomena:
+            result.append(row)
+        else:
+            result.append("NaN," + row)
+    
+    # replace the rest column with the result list
+    df["rest"] = result
+    return df
+
 if __name__ == "__main__":
     # Sample data for the dataframe that won't raise an error
     data_no_error = {
@@ -103,11 +117,22 @@ if __name__ == "__main__":
         'rest': ['CAVOK23/21Q1016', '2000']
     }
 
+    data_missing_phenomena = {
+        'hora': [1654041600000, 1654045200000],
+        'report': ['METAR', 'METAF'],
+        'station': ['XYZ', 'ABC'],  # These station codes are not in the 'aero' dictionary
+        'dt_origin': ['010000', '010100Z'],
+        'wind': ['25002', '02001KT'],
+        'visibility': [3000, 2000],
+        'rest': ['CAVOK,23/21,Q1016', 'BR,OVC21,23/21,Q1016']
+    }
+
     # Create dataframes
     df_error = pd.DataFrame(data_error)
     df_no_error = pd.DataFrame(data_no_error)
     df_missing_visibility = pd.DataFrame(data_missing_visibility)
     df_CAVOK = pd.DataFrame(data_CAVOK)
+    df_missing_phenomena = pd.DataFrame(data_missing_phenomena)
 
     # Check if the function check_station raises an error
     try:
@@ -184,3 +209,8 @@ if __name__ == "__main__":
         print("check_missing_visibility(df_CAVOK) passed")
     else:
         print("check_missing_visibility(df_CAVOK) failed")
+    
+    if check_missing_phenomena(df_missing_phenomena)["rest"].str.strip().str.startswith("NaN,").any():
+        print("check_missing_phenomena(df_missing_phenomena) passed")
+    else:
+        print("check_missing_phenomena(df_missing_phenomena) failed")
