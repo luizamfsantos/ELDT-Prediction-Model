@@ -189,24 +189,20 @@ def expand_metaf(df):
     # separate wind from the rest
     df[["wind","rest"]] = df["rest"].str.split(',', n=1, expand=True)
 
-    # check if rest starts with number
+    # add visibility if missing
     df = check_missing_visibility(df)
+
+    # separate visibility from the rest
     df[["visibility","rest"]] = df["rest"].str.split(',', n=1, expand=True)
-    weather_phenomena = {"BR":"Mist", "FG":"Fog", "HZ":"Haze", "RA":"Rain", "SN":"Snow", "TS":"Thunderstorm", "DZ":"Drizzle", "SH":"Showers", "GR":"Hail", "GS":"Small Hail", "FU":"Smoke", "SA":"Sand", "DU":"Dust", "SQ":"Squall", "FC":"Funnel Cloud", "SS":"Sandstorm", "DS":"Duststorm", "PO":"Dust/Sand Whirls", "PY":"Spray", "VA":"Volcanic Ash", "BC":"Patches", "BL":"Blowing", "DR":"Low Drifting", "FZ":"Freezing", "MI":"Shallow", "PR":"Partial", "VC":"Vicinity"}
+
     # check whether there is at least one weather phenomena, if not add NaN,
-    df["rest"] = df["rest"].apply(lambda x: check_phenomena(x, weather_phenomena))
+    df = check_missing_phenomena(df)
     df[["weather","rest"]] = df["rest"].str.split(',', n=1, expand=True)
     df[["clouds","rest"]] = df["rest"].str.split(',', n=1, expand=True)
     df[["temperature","rest"]] = df["rest"].str.split(',', n=1, expand=True)
     df[["dew_point","altimeter (hPA)"]] = df["rest"].str.split(',', n=1, expand=True)
 
     return df
-    
-def check_phenomena(value, weather_phenomena):
-    if value[:2] in weather_phenomena:
-        return value
-    else:
-        return "NaN," + value
 
 def check_report(df):
     # Check if all values in df["report"] are equal to "METAF"
@@ -238,6 +234,11 @@ def check_missing_visibility(df):
         condition = ~(df["rest"].str.match(r'^\d')) & ~(df["rest"].str.startswith("CAVOK"))
         df["rest"] = np.where(condition, "0000," + df["rest"], df["rest"])
     return df
+
+def check_missing_phenomena(df):
+    weather_phenomena = {"BR":"Mist", "FG":"Fog", "HZ":"Haze", "RA":"Rain", "SN":"Snow", "TS":"Thunderstorm", "DZ":"Drizzle", "SH":"Showers", "GR":"Hail", "GS":"Small Hail", "FU":"Smoke", "SA":"Sand", "DU":"Dust", "SQ":"Squall", "FC":"Funnel Cloud", "SS":"Sandstorm", "DS":"Duststorm", "PO":"Dust/Sand Whirls", "PY":"Spray", "VA":"Volcanic Ash", "BC":"Patches", "BL":"Blowing", "DR":"Low Drifting", "FZ":"Freezing", "MI":"Shallow", "PR":"Partial", "VC":"Vicinity"}
+    return ["NaN," + value if value[:2] not in weather_phenomena else value for value in df["rest"]]
+
 
 if __name__ == "__main__":
     df = read_csv_first_n_entries('../dados.csv', n=100)
