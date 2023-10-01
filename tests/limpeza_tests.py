@@ -228,10 +228,11 @@ if __name__ == "__main__":
         print("clean_taf_metar(df_METAR_raw) failed")
     
     # Check if check_wind_2_components function adds 060V130 to the wind column
-    print(check_wind_2_components(df_wind_2_components))
-    # if check_wind_2_components(df_wind_2_components)["wind"].str.contains(r"{[0-9][0-9][0-9]}V{[0-9][0-9][0-9]}").any():
-    #     print("check_wind_2_components(df_wind_2_components) passed")
-    # else:
-    #     print(check_wind_2_components(df_wind_2_components)["wind"])
-    #     print(check_wind_2_components(df_wind_2_components)["rest"])
-    #     print("check_wind_2_components(df_wind_2_components) failed")
+    pattern = r'(\d{3}V\d{3})$'
+    result = check_wind_2_components(df_wind_2_components)["wind"]
+    if result.str.extract(pattern).any().any():
+        print("check_wind_2_components(df_wind_2_components) passed")
+    else:
+        print(check_wind_2_components(df_wind_2_components)["wind"])
+        print(check_wind_2_components(df_wind_2_components)["rest"])
+        print("check_wind_2_components(df_wind_2_components) failed")
