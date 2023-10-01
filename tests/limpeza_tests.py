@@ -94,6 +94,17 @@ if __name__ == "__main__":
         'rest': ['-PA,OVC22,23/21,Q1016', 'BR,OVC21,23/21,Q1016']
     }
 
+    data_with_2_phenomena = {
+        'hora': [1654041600000, 1654045200000],
+        'report': ['METAR', 'METAF'],
+        'station': ['XYZ', 'ABC'],  
+        'dt_origin': ['010000', '010100Z'],
+        'wind': ['25002', '02001KT'],
+        'visibility': [3000, 2000],
+        'weather': ['BR', '-PA'],
+        'rest': ['OVC22,23/21,Q1016', 'BR,OVC21,23/21,Q1016']
+    }
+
     data_METAR_raw = [
         [1654174800000, "METAR SBBR 021300Z 07006KT 030V090 CAVOK 23/11 Q1021=", "SBBR", "2022-06-02 13:00:00"],
         [1654178400000, "METAR SBBR 021400Z 07004KT 010V120 CAVOK 25/12 Q1021=", "SBBR", "2022-06-02 14:00:00"],
@@ -116,7 +127,9 @@ if __name__ == "__main__":
     df_CAVOK = pd.DataFrame(data_CAVOK)
     df_missing_phenomena = pd.DataFrame(data_missing_phenomena)
     df_with_phenomena = pd.DataFrame(data_with_phenomena)
+    df_with_2_phenomena = pd.DataFrame(data_with_2_phenomena)
     df_METAR_raw = pd.DataFrame(data_METAR_raw, columns=columns_METAR_raw)
+    
     # Check if the function check_station raises an error
     try:
         check_station(df_error)
@@ -231,8 +244,23 @@ if __name__ == "__main__":
     pattern = r'(\d{3}V\d{3})$'
     result = check_wind_2_components(df_wind_2_components)["wind"]
     if result.str.extract(pattern).any().any():
-        print("check_wind_2_components(df_wind_2_components) passed")
+        print("check_wind_2_components(df_wind_2_components) add passed")
     else:
-        print(check_wind_2_components(df_wind_2_components)["wind"])
-        print(check_wind_2_components(df_wind_2_components)["rest"])
-        print("check_wind_2_components(df_wind_2_components) failed")
+        print("check_wind_2_components(df_wind_2_components) add failed")
+    
+    # Check if check_wind_2_components function removes 060V130 from the rest column
+    pattern = r'(\d{3}V\d{3})$'
+    result = check_wind_2_components(df_wind_2_components)["rest"]
+    if not result.str.extract(pattern).any().any():
+        print("check_wind_2_components(df_wind_2_components) remove passed")
+    else:
+        print("check_wind_2_components(df_wind_2_components) remove failed")
+
+    # Check if check_extra_phenomena adds the phenomena to the weather column
+    pattern = r'^[A-Z]{2}'
+    result = check_extra_phenomena(df_with_2_phenomena)["weather"]
+    print(result)
+    # if result.str.extract(pattern).any().any():
+    #     print("check_extra_phenomena(df_with_phenomena) add passed")
+    # else:
+    #     print("check_extra_phenomena(df_with_phenomena) add failed")

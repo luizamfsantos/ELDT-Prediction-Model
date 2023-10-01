@@ -1,7 +1,6 @@
 # import libraries
 import pandas as pd
 import numpy as np
-import re
 
 def read_csv_first_n_entries(file_path, n=100, delimiter=',', encoding='utf-8'):
     """
@@ -107,6 +106,9 @@ def expand_taf_metar(df, report="metaf"):
     # separate weather from the rest
     df[["weather","rest"]] = df["rest"].str.split(',', n=1, expand=True)
 
+    # check if there is any extra phenomena, if so add them to the weather column
+    df = check_extra_phenomena(df)
+    
     # separate clouds from the rest
     df[["clouds","rest"]] = df["rest"].str.split(',', n=1, expand=True)
 
@@ -199,6 +201,14 @@ def check_missing_phenomena(df):
     
     # replace the rest column with the result list
     df["rest"] = result
+    return df
+
+def check_extra_phenomena(df):
+    # check if rest starts with 2 letters and a comma, if so then add those letters to the weather column and remove them from the rest column
+    pattern = r'^([A-Z]{2})'
+    if (df["rest"].str.match(pattern).any()):
+        df["weather"] = np.where(df["rest"].str.match(pattern), df["weather"]+ df["rest"].str.extract(pattern)[0], df["weather"])
+        df["rest"] = np.where(df["rest"].str.match(pattern), df["rest"].str.replace(pattern + ",", "", regex=True), df["rest"])
     return df
 
 if __name__ == "__main__":
