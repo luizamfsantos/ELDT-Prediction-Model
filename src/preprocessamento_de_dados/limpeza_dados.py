@@ -26,9 +26,9 @@ def read_csv_first_n_entries(file_path, n=100, delimiter=',', encoding='utf-8'):
         print(f"An error occurred: {str(e)}")
         return None
 
-def clean_metaf(array):
+def clean_taf_metar(array):
     """
-    Clean the 'metaf' column of a DataFrame.
+    Clean the 'metaf' or 'metar' column of a DataFrame.
 
     Parameters:
     - array (array): The 'metaf' column of a DataFrame.
@@ -73,7 +73,7 @@ def expand_taf_metar(df, report="metaf"):
     df = add_missing_columns(df,report)
     
     # clean metaf column
-    df[report] = clean_metaf(df[report])
+    df[report] = clean_taf_metar(df[report])
 
     # expand metaf column
     # separate report from the rest
