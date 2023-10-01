@@ -31,24 +31,15 @@ def check_station(df):
     aero_list = [*aero.keys()]
     if ~(df["station"].isin(aero_list).any()):
         raise ValueError("df['station'] not in aero.keys()")
+    
+def check_dt_origin(df):
+    # check if dt_origin ends with Z
+    if ~(df["dt_origin"].str.endswith("Z").all()):
+        raise ValueError("df['dt_origin'] is not a valid dt_origin: correct format is day hour minute Z")
+
 
 if __name__ == "__main__":
-    # data_check_report = {
-    #     'hora': [1654041600000, 1654045200000],
-    #     'report': ['METAR', 'METAR'],
-    #     'station': ['SBGL', 'SBGL'],
-    #     'dt_origin': ['010000Z', '010100Z'],
-    #     'wind': ['25002KT', '02001KT'],
-    #     'visibility': [3000, 2000],
-    #     'weather': ['BR', 'BR'],
-    #     'clouds': ['OVC033', 'OVC011'],
-    #     'temperature': ['23/21', '22/21'],
-    #     'dew_point': ['21', '21'],
-    #     'altimeter (hPA)': ['Q1016=', 'Q1017='],
-    #     'aero': ['SBGL', 'SBSG']}
-    # df_check_report = pd.DataFrame(data_check_report)
-    # check_report(df_check_report)
-    # print("check_report(df_check_report) passed")
+    # Sample data for the dataframe that won't raise an error
     data_no_error = {
         'hora': [1654041600000, 1654045200000],
         'report': ['METAF', 'METAF'],
@@ -64,12 +55,12 @@ if __name__ == "__main__":
         'aero': ['SBGL', 'SBSG']
     }
 
-    # Sample data for the dataframe that won't raise an error
+    # Sample data for the dataframe that will raise an error
     data_error = {
         'hora': [1654041600000, 1654045200000],
         'report': ['METAR', 'METAF'],
         'station': ['XYZ', 'ABC'],  # These station codes are not in the 'aero' dictionary
-        'dt_origin': ['010000Z', '010100Z'],
+        'dt_origin': ['010000', '010100Z'],
         'wind': ['25002KT', '02001KT'],
         'visibility': [3000, 2000],
         'weather': ['BR', 'BR'],
@@ -84,7 +75,7 @@ if __name__ == "__main__":
     df_error = pd.DataFrame(data_error)
     df_no_error = pd.DataFrame(data_no_error)
 
-    # Check if the function raises an error
+    # Check if the function check_station raises an error
     try:
         check_station(df_error)
     except ValueError:
@@ -92,11 +83,42 @@ if __name__ == "__main__":
     else:
         print("check_station(df_error) failed")
 
-    # Check if the function doesn't raise an error
-
+    # Check if the function check_station doesn't raise an error
     try:
         check_station(df_no_error)
     except ValueError:
         print("check_station(df_no_error) failed")
     else:
         print("check_station(df_no_error) passed")
+    
+    # Check if the function check_report raises an error
+    try:
+        check_report(df_error)
+    except ValueError:
+        print("check_report(df_error) passed")
+    else:
+        print("check_report(df_error) failed")
+    
+    # Check if the function check_report doesn't raise an error
+    try:
+        check_report(df_no_error)
+    except ValueError:
+        print("check_report(df_no_error) failed")
+    else:
+        print("check_report(df_no_error) passed")
+    
+    # Check if the function check_dt_origin raises an error
+    try:
+        check_dt_origin(df_error)
+    except ValueError:
+        print("check_dt_origin(df_error) passed")
+    else:
+        print("check_dt_origin(df_error) failed")
+    
+    # Check if the function check_dt_origin doesn't raise an error
+    try:
+        check_dt_origin(df_no_error)
+    except ValueError:
+        print("check_dt_origin(df_no_error) failed")
+    else:
+        print("check_dt_origin(df_no_error) passed")

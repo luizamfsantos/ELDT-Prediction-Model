@@ -182,10 +182,10 @@ def expand_metaf(df):
     df[["station","rest"]] = df["rest"].str.split(',', n=1, expand=True)
     check_station(df) # check if station is one of the allowed values
     
+    # separate dt_origin from the rest
     df[["dt_origin","rest"]] = df["rest"].str.split(',', n=1, expand=True)
-    # check if dt_origin ends with Z
-    if ~(df["dt_origin"].str.endswith("Z").all()):
-        raise ValueError("df['dt_origin'] does not end with Z")
+    check_dt_origin(df)
+    
     df[["wind","rest"]] = df["rest"].str.split(',', n=1, expand=True)
     # check if wind ends with KT
     if ~(df["wind"].str.endswith("KT").all()):
@@ -224,6 +224,11 @@ def check_station(df):
     aero_list = [*aero.keys()]
     if ~(df["station"].isin(aero_list).any()):
         raise ValueError("df['station'] not in aero.keys()")
+
+def check_dt_origin(df):
+    # check if dt_origin ends with Z
+    if ~(df["dt_origin"].str.endswith("Z").all()):
+        raise ValueError("df['dt_origin'] is not a valid dt_origin: correct format is day hour minute Z")
 
 if __name__ == "__main__":
     df = read_csv_first_n_entries('../dados.csv', n=100)
