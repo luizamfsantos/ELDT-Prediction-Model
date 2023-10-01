@@ -16,9 +16,10 @@ from src.preprocessamento_de_dados.limpeza_dados import *
 
 
 def check_report(df):
-    # check if df["report"] == "METAF"
-    if "METAF" not in df["report"].values:
-        raise ValueError("METAF not found in df['report']")
+    # Check if all values in df["report"] are equal to "METAF"
+    if not (df["report"] == "METAF").all():
+        raise ValueError("Not all values in df['report'] are equal to METAF")
+
 
 def check_phenomena(value, weather_phenomena):
     if value[:2] in weather_phenomena:
