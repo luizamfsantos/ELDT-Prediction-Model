@@ -39,7 +39,8 @@ def clean_taf_metar(array):
     array = array.str.replace(r'-\s+', '-', regex=True)
 
     # Remove =\n
-    array = array.str.replace(r'=\n', '', regex=True)
+    array = array.str.replace(r'=\\n', '', regex=True)
+    array = array.str.replace(r'=', '', regex=True) # Remove = if it is not followed by \n
 
     # Remove spaces at the beginning and end of the string
     array = array.str.strip()
